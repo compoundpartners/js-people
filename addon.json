@@ -1,5 +1,5 @@
 {
-    "package-name": "aldryn-people",
+    "package-name": "js-people",
     "installed-apps": [
         "aldryn_boilerplates",
         "aldryn_common",

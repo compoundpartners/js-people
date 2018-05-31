@@ -16,7 +16,7 @@ class PersonMenu(CMSAttachMenu):
     """
     Provides an attachable menu of all people.
     """
-    name = _('Aldryn People: Person Menu')
+    name = _('JumpSuite People: Person Menu')
 
     def get_nodes(self, request):
         nodes = []
@@ -48,7 +48,7 @@ class GroupMenu(CMSAttachMenu):
     """
     Provides an attachable menu of all groups.
     """
-    name = _('Aldryn People: Group Menu')
+    name = _('JumpSuite People: Group Menu')
 
     def get_nodes(self, request):
         nodes = []
