@@ -43,7 +43,7 @@ CLASSIFIERS = [
 ]
 
 setup(
-    name='aldryn-people',
+    name='js-people',
     version=__version__,
     description='Aldryn People publishes profile pages for people in your '
                 'organisation including team members, collaborators, '

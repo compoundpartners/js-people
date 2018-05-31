@@ -1,4 +1,6 @@
 {
+    "name": "JumpSuite People",
+    "description": "Create People.",
     "package-name": "js-people",
     "installed-apps": [
         "aldryn_boilerplates",
@@ -9,5 +11,12 @@
         "filer",
         "parler",
         "sortedm2m"
-    ]
+    ],
+    "author": {
+        "name": "Divio AG",
+        "url": "https://www.divio.ch"
+    },
+    "license": {
+        "name": "BSD"
+    }
 }
