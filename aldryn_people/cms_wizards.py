@@ -68,8 +68,18 @@ class PeopleGroupWizard(BasePeopleWizard):
 class CreatePeoplePersonForm(BaseFormMixin, TranslatableModelForm):
     class Meta:
         model = Person
-        fields = ['name', 'function', 'description', 'phone', 'mobile',
-                  'email', 'website', 'groups']
+        fields = ['name',
+                'function',
+                'description',
+                'phone',
+                'mobile',
+                'email',
+                'facebook',
+                'twitter',
+                'linkedin',
+                'location',
+                'website',
+                'groups']
 
 
 class CreatePeopleGroupForm(BaseFormMixin, TranslatableModelForm):

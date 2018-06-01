@@ -10,7 +10,12 @@
     <p class="people-meta">
         {% if person.phone %}{% trans "Phone:" %} <span>{{ person.phone|phoneformat }}</span><br />{% endif %}
         {% if person.mobile %}{% trans "Mobile:" %} <span>{{ person.mobile|phoneformat }}</span><br />{% endif %}
-        {% if person.email %}{% trans "E-Mail:" %} <a href="mailto:{{ person.email }}">{{ person.email }}</a>{% endif %}
+        {% if person.email %}{% trans "E-Mail:" %} <a href="mailto:{{ person.email }}">{{ person.email }}</a><br />{% endif %}
+        {% if person.facebook %}{% trans "Facebook:" %} <a href="{{ person.facebook }}" target="_blank">Facebook</a><br />{% endif %}
+        {% if person.twitter %}{% trans "Twitter:" %} <a href="https://twitter.com/oliverashford{{ person.twitter }}" target="_blank">@{{ person.twitter }}</a><br />{% endif %}
+        {% if person.linkedin %}{% trans "LinkeIn:" %} <a href="{{ person.linkedin }}" target="_blank">LinkedIn</a><br />{% endif %}
+        {% if person.location %}{% trans "Location:" %} <span>{{ person.location }}</span>{% endif %}
+
         {% if not instance and person.vcard_enabled or instance.show_vcard and person.vcard_enabled %}
             <br /><a href="{% url 'aldryn_people:download_vcard' person.slug %}" class="btn-download">{% trans "Download vCard" %}</a>
         {% endif %}

@@ -51,8 +51,18 @@ class PersonAdmin(PlaceholderAdminMixin,
         }),
         (_('Contact (untranslated)'), {
             'fields': (
-                'visual', 'phone', 'mobile', 'fax', 'email', 'website',
-                'user', 'vcard_enabled'
+                'visual',
+                'phone',
+                'mobile',
+                'fax',
+                'email',
+                'website',
+                'facebook',
+                'twitter',
+                'linkedin',
+                'location',
+                'user',
+                'vcard_enabled'
             ),
         }),
         (None, {
@@ -89,8 +99,13 @@ class GroupAdmin(PlaceholderAdminMixin,
         }),
         (_('Contact (untranslated)'), {
             'fields': (
-                'phone', 'fax', 'email', 'website',
-                'address', 'postal_code', 'city'
+                'phone',
+                'fax',
+                'email',
+                'website',
+                'address',
+                'postal_code',
+                'city'
             )
         }),
     )

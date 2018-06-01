@@ -23,28 +23,57 @@
     {% if not group %}</h2>{% else %}</h3>{% endif %}
 
     <p class="meta">
+
         {% if person.phone %}
             <strong>{% trans "Phone:" %}</strong>
             {{ person.phone|phoneformat }}<br>
         {% endif %}
+
         {% if person.mobile %}
             <strong>{% trans "Mobile:" %}</strong>
             {{ person.mobile|phoneformat }}<br>
         {% endif %}
+
         {% if person.fax %}
             <strong>{% trans "Fax:" %}</strong>
             {{ person.fax }}<br>
         {% endif %}
+
         {% if person.email %}
             <strong>{% trans "Email:" %}</strong>
             <span class="fa fa-fw fa-envelope" aria-hidden="true"></span>
             <a href="mailto:{{ person.email }}">{{ person.email }}</a><br>
         {% endif %}
+
         {% if person.website %}
             <strong>{% trans "Website:" %}</strong>
             <span class="fa fa-fw fa-globe" aria-hidden="true"></span>
             <a href="{{ person.website }}" target="_blank">{{ person.website }}</a><br>
         {% endif %}
+
+        {% if person.facebook %}
+            <strong>{% trans "Facebook:" %}</strong>
+            <span class="fa fa-fw fa-facebook" aria-hidden="true"></span>
+            <a href="{{ person.facebook }}" target="_blank">Facebook</a><br>
+        {% endif %}
+
+        {% if person.twitter %}
+            <strong>{% trans "Twitter:" %}</strong>
+            <span class="fa fa-fw fa-twitter" aria-hidden="true"></span>
+            <a href="https://twitter.com/oliverashford{{ person.twitter }}" target="_blank">@{{ person.twitter }}</a><br>
+        {% endif %}
+
+        {% if person.linkedin %}
+            <strong>{% trans "LinkeIn:" %}</strong>
+            <span class="fa fa-fw fa-linkedin" aria-hidden="true"></span>
+            <a href="{{ person.linkedin }}" target="_blank">LinkedIn</a><br>
+        {% endif %}
+
+        {% if person.location %}
+            <strong>{% trans "Location:" %}</strong>
+            {{ person.location }}<br>
+        {% endif %}
+
     </p>
 
     {% if person.description %}

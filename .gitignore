@@ -59,3 +59,4 @@ docs/env
 node_modules/
 aldryn_people/tests/frontend/coverage/
 requirements.txt
+aldryn_people/migrations/0019_auto_20180601_0651.py

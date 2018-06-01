@@ -125,6 +125,14 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         verbose_name=_('fax'), null=True, blank=True, max_length=100)
     email = models.EmailField(
         verbose_name=_("email"), blank=True, default='')
+    facebook = models.URLField(
+        verbose_name=_('facebook'), null=True, blank=True, max_length=200)
+    twitter = models.CharField(
+        verbose_name=_('twitter'), null=True, blank=True, max_length=100)
+    linkedin = models.URLField(
+        verbose_name=_('linkedin'), null=True, blank=True, max_length=200)
+    location = models.CharField(
+        verbose_name=_('location'), null=True, blank=True, max_length=100)
     website = models.URLField(
         verbose_name=_('website'), null=True, blank=True)
     groups = SortedM2MModelField(
