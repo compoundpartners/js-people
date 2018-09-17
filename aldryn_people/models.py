@@ -264,6 +264,9 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
 
         return six.b('{}'.format(vcard))
 
+    def first_name(self):
+        return self.name.split(' ')[0]
+
 
 @python_2_unicode_compatible
 class BasePeoplePlugin(CMSPlugin):
