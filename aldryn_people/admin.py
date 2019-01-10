@@ -20,9 +20,9 @@ class PersonAdmin(PlaceholderAdminMixin,
                   TranslatableAdmin):
 
     list_display = [
-        '__str__', 'email', 'vcard_enabled', 'num_groups', ]
+        '__str__', 'email', 'is_published', 'vcard_enabled', 'num_groups', ]
     list_filter = ['groups', 'vcard_enabled']
-    search_fields = ('translations__name', 'email', 'translations__function')
+    search_fields = ('translations__first_name', 'translations__last_name', 'email', 'translations__function')
 
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
         """
@@ -44,9 +44,10 @@ class PersonAdmin(PlaceholderAdminMixin,
     fieldsets = (
         (None, {
             'fields': (
-                'name',
+                'first_name',
+                'last_name',
                 'slug',
-                'function', 'description',
+                'function', 'description', 'is_published',
             ),
         }),
         (_('Contact (untranslated)'), {

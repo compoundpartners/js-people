@@ -15,7 +15,7 @@ class PeopleIndex(get_index_base()):
     INDEX_TITLE = True
 
     def get_title(self, obj):
-        return obj.name
+        return str(obj)
 
     def get_description(self, obj):
         return obj.description
@@ -24,7 +24,7 @@ class PeopleIndex(get_index_base()):
         return {'translations__language_code': language}
 
     def get_index_queryset(self, language):
-        return self.get_model().objects.active_translations(
+        return self.get_model().objects.published().active_translations(
             language_code=language).translated(language)
 
     def get_model(self):

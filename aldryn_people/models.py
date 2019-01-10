@@ -31,7 +31,7 @@ from djangocms_text_ckeditor.fields import HTMLField
 from filer.fields.image import FilerImageField
 from parler.models import TranslatableModel, TranslatedFields
 
-
+from .managers import PeopleManager
 from .utils import get_additional_styles
 
 
@@ -104,10 +104,12 @@ class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
 @python_2_unicode_compatible
 class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
              TranslatableModel):
-    slug_source_field_name = 'name'
 
     translations = TranslatedFields(
-        name=models.CharField(
+        first_name=models.CharField(
+            _('name'), max_length=255, blank=False,
+            default='', help_text=_("Provide this person's name.")),
+        last_name=models.CharField(
             _('name'), max_length=255, blank=False,
             default='', help_text=_("Provide this person's name.")),
         slug=models.SlugField(
@@ -143,9 +145,13 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         null=True, blank=True, default=None, on_delete=models.SET_NULL)
     vcard_enabled = models.BooleanField(
         verbose_name=_('enable vCard download'), default=True)
+    is_published = models.BooleanField(
+        verbose_name=_('show on website'), default=True)
     user = models.OneToOneField(
         getattr(settings, 'AUTH_USER_MODEL', 'auth.User'),
         null=True, blank=True, related_name='persons')
+
+    objects = PeopleManager()
 
     class Meta:
         verbose_name = _('Person')
@@ -156,11 +162,18 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
 
         if six.PY2:
             pkstr = six.u(pkstr)
-        name = self.safe_translation_getter(
-            'name',
-            default='',
-            any_language=True
-        ).strip()
+        name = ' '.join((
+            self.safe_translation_getter(
+                'first_name',
+                default='',
+                any_language=True
+            ),
+            self.safe_translation_getter(
+                'last_name',
+                default='',
+                any_language=True
+            )
+        )).strip()
         return name if len(name) > 0 else pkstr
 
     @property
@@ -206,8 +219,7 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         vcard = Vcard()
         function = self.safe_translation_getter('function')
 
-        safe_name = self.safe_translation_getter(
-            'name', default="Person: {0}".format(self.pk))
+        safe_name = self.name()
         vcard.add_line('FN', safe_name)
         vcard.add_line('N', [None, safe_name, None, None, None])
 
@@ -264,8 +276,11 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
 
         return six.b('{}'.format(vcard))
 
-    def first_name(self):
-        return self.name.split(' ')[0]
+    def get_slug_source(self):
+        return self.__str__()
+
+    def name(self):
+        return self.__str__()
 
 
 @python_2_unicode_compatible
@@ -303,7 +318,7 @@ class BasePeoplePlugin(CMSPlugin):
         self.people = oldinstance.people.all()
 
     def get_selected_people(self):
-        return self.people.select_related('visual')
+        return self.people.published().select_related('visual')
 
     def __str__(self):
         return text_type(self.pk)

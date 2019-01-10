@@ -5,7 +5,7 @@
 
 {% block content %}
     <h2>{% render_model group "name" %}</h2>
-    {% for person in group.people.all|dictsort:"name" %}
+    {% for person in group.people.publish|dictsort:"name" %}
         {% include "aldryn_people/includes/person.html" with person=person %}
     {% endfor %}
 {% endblock content %}

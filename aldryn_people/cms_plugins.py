@@ -64,7 +64,7 @@ class PeoplePlugin(CMSPluginBase):
     def render(self, context, instance, placeholder):
         people = instance.get_selected_people()
         if not people:
-            people = models.Person.objects.all()
+            people = models.Person.objects.published()
         valid_languages = get_valid_languages(
             DEFAULT_APP_NAMESPACE, instance.language, context['request'])
         people = people.translated(*valid_languages)

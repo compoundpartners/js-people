@@ -31,9 +31,7 @@ class PersonMenu(CMSAttachMenu):
                 url = None
             if url:
                 node = NavigationNode(
-                    person.safe_translation_getter(
-                        'name', default=_('person: {0}').format(person.pk),
-                        language_code=language),
+                    str(person),
                     url,
                     person.pk,
                 )
