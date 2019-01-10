@@ -14,14 +14,29 @@ from aldryn_translation_tools.admin import AllTranslationsMixin
 
 from .models import Person, Group
 
+from .constants import (
+    ALDRYN_PEOPLE_USER_THRESHOLD,
+    ALDRYN_PEOPLE_HIDE_FAX,
+    ALDRYN_PEOPLE_HIDE_WEBSITE,
+    ALDRYN_PEOPLE_HIDE_FACEBOOK,
+    ALDRYN_PEOPLE_HIDE_TWITTER,
+    ALDRYN_PEOPLE_HIDE_LINKEDIN,
+    ALDRYN_PEOPLE_HIDE_GROUPS,
+)
 
 class PersonAdmin(PlaceholderAdminMixin,
                   AllTranslationsMixin,
                   TranslatableAdmin):
 
     list_display = [
-        '__str__', 'email', 'is_published', 'vcard_enabled', 'num_groups', ]
-    list_filter = ['groups', 'vcard_enabled']
+        '__str__', 'email', 'is_published', 'vcard_enabled', ]
+    if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
+        list_display += ['num_groups',]
+        list_filter = ['is_published', 'groups', 'vcard_enabled']
+    else:
+        list_filter = ['is_published', 'vcard_enabled']
+
+
     search_fields = ('translations__first_name', 'translations__last_name', 'email', 'translations__function')
 
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
@@ -31,15 +46,45 @@ class PersonAdmin(PlaceholderAdminMixin,
         # This is a hack to use until get_raw_id_fields() lands in Django:
         # https://code.djangoproject.com/ticket/17881.
         if db_field.name in ['user', ]:
-            threshold = getattr(
-                settings, 'ALDRYN_PEOPLE_USER_THRESHOLD', 50)
             model = Person._meta.get_field('user').model
-            if model.objects.count() > threshold:
+            if model.objects.count() > ALDRYN_PEOPLE_USER_THRESHOLD:
                 kwargs['widget'] = admin.widgets.ForeignKeyRawIdWidget(
                     db_field.rel, self.admin_site, using=kwargs.get('using'))
                 return db_field.formfield(**kwargs)
         return super(PersonAdmin, self).formfield_for_foreignkey(
             db_field, request, **kwargs)
+
+    contact_fields = (
+        'visual',
+        'phone',
+        'mobile',
+        'email',
+    )
+    if ALDRYN_PEOPLE_HIDE_FAX == 0:
+        contact_fields += (
+            'fax',
+        )
+    if ALDRYN_PEOPLE_HIDE_WEBSITE == 0:
+        contact_fields += (
+            'website',
+        )
+    if ALDRYN_PEOPLE_HIDE_FACEBOOK == 0:
+        contact_fields += (
+            'facebook',
+        )
+    if ALDRYN_PEOPLE_HIDE_TWITTER == 0:
+        contact_fields += (
+            'twitter',
+        )
+    if ALDRYN_PEOPLE_HIDE_LINKEDIN == 0:
+        contact_fields += (
+            'linkedin',
+        )
+    contact_fields += (
+        'location',
+        'user',
+        'vcard_enabled'
+    )
 
     fieldsets = (
         (None, {
@@ -51,27 +96,15 @@ class PersonAdmin(PlaceholderAdminMixin,
             ),
         }),
         (_('Contact (untranslated)'), {
-            'fields': (
-                'visual',
-                'phone',
-                'mobile',
-                'fax',
-                'email',
-                'website',
-                'facebook',
-                'twitter',
-                'linkedin',
-                'location',
-                'user',
-                'vcard_enabled'
-            ),
+            'fields': contact_fields,
         }),
-        (None, {
+    )
+    if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
+        fieldsets += ((None, {
             'fields': (
                 'groups',
             ),
-        }),
-    )
+        }),)
 
     def get_queryset(self, request):
         qs = super(PersonAdmin, self).get_queryset(request)
@@ -123,4 +156,6 @@ class GroupAdmin(PlaceholderAdminMixin,
 
 
 admin.site.register(Person, PersonAdmin)
-admin.site.register(Group, GroupAdmin)
+
+if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
+    admin.site.register(Group, GroupAdmin)
