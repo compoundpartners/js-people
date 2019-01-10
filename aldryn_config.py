@@ -34,6 +34,12 @@ class Form(forms.BaseForm):
     hide_groups = forms.CheckboxField(
         'Hide Groups', required=False, initial=False
     )
+    secondary_image = forms.CheckboxField(
+        'Show secondary image', required=False, initial=False
+    )
+    secondary_phone = forms.CheckboxField(
+        'Show secondary telephone number', required=False, initial=False
+    )
 
     def to_settings(self, data, settings):
         settings['PEOPLE_PLUGIN_STYLES'] = data.get('people_plugin_styles', '')
@@ -48,4 +54,6 @@ class Form(forms.BaseForm):
         settings['ALDRYN_PEOPLE_HIDE_TWITTER'] = int(data['hide_twitter'])
         settings['ALDRYN_PEOPLE_HIDE_LINKEDIN'] = int(data['hide_linkedin'])
         settings['ALDRYN_PEOPLE_HIDE_GROUPS'] = int(data['hide_groups'])
+        settings['ALDRYN_PEOPLE_SHOW_SECONDARY_IMAGE'] = int(data['secondary_image'])
+        settings['ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE'] = int(data['secondary_phone'])
         return settings

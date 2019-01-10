@@ -121,6 +121,8 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
     )
     phone = models.CharField(
         verbose_name=_('phone'), null=True, blank=True, max_length=100)
+    second_phone = models.CharField(
+        verbose_name=_('secondary phone'), null=True, blank=True, max_length=100)
     mobile = models.CharField(
         verbose_name=_('mobile'), null=True, blank=True, max_length=100)
     fax = models.CharField(
@@ -143,6 +145,9 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
                     'will be the "primary group".'))
     visual = FilerImageField(
         null=True, blank=True, default=None, on_delete=models.SET_NULL)
+    second_visual = FilerImageField(
+        null=True, blank=True, default=None, on_delete=models.SET_NULL,
+        related_name='second_person_visual')
     vcard_enabled = models.BooleanField(
         verbose_name=_('enable vCard download'), default=True)
     is_published = models.BooleanField(

@@ -22,6 +22,8 @@ from .constants import (
     ALDRYN_PEOPLE_HIDE_TWITTER,
     ALDRYN_PEOPLE_HIDE_LINKEDIN,
     ALDRYN_PEOPLE_HIDE_GROUPS,
+    ALDRYN_PEOPLE_SHOW_SECONDARY_IMAGE,
+    ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE,
 )
 
 class PersonAdmin(PlaceholderAdminMixin,
@@ -56,10 +58,20 @@ class PersonAdmin(PlaceholderAdminMixin,
 
     contact_fields = (
         'visual',
-        'phone',
-        'mobile',
-        'email',
     )
+    if ALDRYN_PEOPLE_SHOW_SECONDARY_IMAGE != 0:
+        contact_fields += (
+            'second_visual',
+        )
+    contact_fields += (
+        'email',
+        'mobile',
+        'phone',
+    )
+    if ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE != 0:
+        contact_fields += (
+            'second_phone',
+        )
     if ALDRYN_PEOPLE_HIDE_FAX == 0:
         contact_fields += (
             'fax',
