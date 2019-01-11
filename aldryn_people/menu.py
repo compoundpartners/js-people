@@ -10,6 +10,8 @@ from menus.base import NavigationNode
 from menus.menu_pool import menu_pool
 
 from .models import Group, Person
+from .constants import ALDRYN_PEOPLE_HIDE_GROUPS
+
 
 
 class PersonMenu(CMSAttachMenu):
@@ -70,5 +72,5 @@ class GroupMenu(CMSAttachMenu):
                 nodes.append(node)
         return nodes
 
-
-menu_pool.register_menu(GroupMenu)
+if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
+    menu_pool.register_menu(GroupMenu)
