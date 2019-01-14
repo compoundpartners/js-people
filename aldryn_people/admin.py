@@ -38,8 +38,11 @@ class PersonAdmin(PlaceholderAdminMixin,
     else:
         list_filter = ['is_published', 'vcard_enabled']
 
-
     search_fields = ('translations__first_name', 'translations__last_name', 'email', 'translations__function')
+
+    filter_horizontal = [
+        'categories',
+    ]
 
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
         """
@@ -114,7 +117,13 @@ class PersonAdmin(PlaceholderAdminMixin,
     if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
         fieldsets += ((None, {
             'fields': (
-                'groups',
+                'groups', 'categories',
+            ),
+        }),)
+    else:
+        fieldsets += ((None, {
+            'fields': (
+                'categories',
             ),
         }),)
 

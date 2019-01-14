@@ -25,6 +25,7 @@ from aldryn_translation_tools.models import (
     TranslatedAutoSlugifyMixin,
     TranslationHelperMixin,
 )
+from aldryn_categories.fields import CategoryManyToManyField
 from cms.models.pluginmodel import CMSPlugin
 from cms.utils.i18n import get_current_language, get_default_language
 from djangocms_text_ckeditor.fields import HTMLField
@@ -155,6 +156,8 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
     user = models.OneToOneField(
         getattr(settings, 'AUTH_USER_MODEL', 'auth.User'),
         null=True, blank=True, related_name='persons')
+    categories = CategoryManyToManyField('aldryn_categories.Category',
+         verbose_name=_('categories'), blank=True)
 
     objects = PeopleManager()
 
