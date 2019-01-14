@@ -44,7 +44,7 @@ ALDRYN_PEOPLE_HIDE_GROUPS = getattr(
     'ALDRYN_PEOPLE_HIDE_GROUPS',
     0,
 )
-ALDRYN_PEOPLE_HIDE_GROUPS = getattr(
+ALDRYN_PEOPLE_HIDE_USER = getattr(
     settings,
     'ALDRYN_PEOPLE_HIDE_USER',
     0,
