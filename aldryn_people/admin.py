@@ -22,6 +22,7 @@ from .constants import (
     ALDRYN_PEOPLE_HIDE_TWITTER,
     ALDRYN_PEOPLE_HIDE_LINKEDIN,
     ALDRYN_PEOPLE_HIDE_GROUPS,
+    ALDRYN_PEOPLE_HIDE_USER,
     ALDRYN_PEOPLE_SHOW_SECONDARY_IMAGE,
     ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE,
 )
@@ -48,14 +49,15 @@ class PersonAdmin(PlaceholderAdminMixin,
         """
         Determines if the User widget should be a drop-down or a raw ID field.
         """
-        # This is a hack to use until get_raw_id_fields() lands in Django:
-        # https://code.djangoproject.com/ticket/17881.
-        if db_field.name in ['user', ]:
-            model = Person._meta.get_field('user').model
-            if model.objects.count() > ALDRYN_PEOPLE_USER_THRESHOLD:
-                kwargs['widget'] = admin.widgets.ForeignKeyRawIdWidget(
-                    db_field.rel, self.admin_site, using=kwargs.get('using'))
-                return db_field.formfield(**kwargs)
+        if ALDRYN_PEOPLE_HIDE_USER == 0:
+            # This is a hack to use until get_raw_id_fields() lands in Django:
+            # https://code.djangoproject.com/ticket/17881.
+            if db_field.name in ['user', ]:
+                model = Person._meta.get_field('user').model
+                if model.objects.count() > ALDRYN_PEOPLE_USER_THRESHOLD:
+                    kwargs['widget'] = admin.widgets.ForeignKeyRawIdWidget(
+                        db_field.rel, self.admin_site, using=kwargs.get('using'))
+                    return db_field.formfield(**kwargs)
         return super(PersonAdmin, self).formfield_for_foreignkey(
             db_field, request, **kwargs)
 
@@ -97,9 +99,12 @@ class PersonAdmin(PlaceholderAdminMixin,
         )
     contact_fields += (
         'location',
-        'user',
         'vcard_enabled'
     )
+    if ALDRYN_PEOPLE_HIDE_USER == 0:
+        contact_fields += (
+            'user',
+        )
 
     fieldsets = (
         (None, {

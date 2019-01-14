@@ -34,6 +34,9 @@ class Form(forms.BaseForm):
     hide_groups = forms.CheckboxField(
         'Hide Groups', required=False, initial=False
     )
+    hide_user = forms.CheckboxField(
+        'Hide user', required=False, initial=False
+    )
     secondary_image = forms.CheckboxField(
         'Show secondary image', required=False, initial=False
     )
@@ -54,6 +57,7 @@ class Form(forms.BaseForm):
         settings['ALDRYN_PEOPLE_HIDE_TWITTER'] = int(data['hide_twitter'])
         settings['ALDRYN_PEOPLE_HIDE_LINKEDIN'] = int(data['hide_linkedin'])
         settings['ALDRYN_PEOPLE_HIDE_GROUPS'] = int(data['hide_groups'])
+        settings['ALDRYN_PEOPLE_HIDE_USER'] = int(data['hide_user'])
         settings['ALDRYN_PEOPLE_SHOW_SECONDARY_IMAGE'] = int(data['secondary_image'])
         settings['ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE'] = int(data['secondary_phone'])
         return settings
