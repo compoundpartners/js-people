@@ -10,6 +10,8 @@ from menus.base import NavigationNode
 from menus.menu_pool import menu_pool
 
 from .models import Group, Person
+from .constants import ALDRYN_PEOPLE_HIDE_GROUPS, ALDRYN_PEOPLE_HIDE_LOCATION
+
 
 
 class PersonMenu(CMSAttachMenu):
@@ -31,9 +33,7 @@ class PersonMenu(CMSAttachMenu):
                 url = None
             if url:
                 node = NavigationNode(
-                    person.safe_translation_getter(
-                        'name', default=_('person: {0}').format(person.pk),
-                        language_code=language),
+                    str(person),
                     url,
                     person.pk,
                 )
@@ -72,5 +72,37 @@ class GroupMenu(CMSAttachMenu):
                 nodes.append(node)
         return nodes
 
+#if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
+    #menu_pool.register_menu(GroupMenu)
 
-menu_pool.register_menu(GroupMenu)
+
+class LocationMenu(CMSAttachMenu):
+    """
+    Provides an attachable menu of all locations.
+    """
+    name = _('JumpSuite People: Location Menu')
+
+    def get_nodes(self, request):
+        nodes = []
+        language = get_language_from_request(request, check_path=True)
+        locations = (Location.objects.language(language)
+                               .active_translations(language))
+
+        for location in locations:
+            try:
+                url = location.get_absolute_url(language=language)
+            except NoReverseMatch:
+                url = None
+            if url:
+                node = NavigationNode(
+                    location.safe_translation_getter(
+                        'name', default=_('location: {0}').format(location.pk),
+                        language_code=language),
+                    url,
+                    location.pk,
+                )
+                nodes.append(node)
+        return nodes
+
+if ALDRYN_PEOPLE_HIDE_LOCATION == 0:
+    menu_pool.register_menu(LocationMenu)

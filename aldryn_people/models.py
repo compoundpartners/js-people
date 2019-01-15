@@ -25,14 +25,69 @@ from aldryn_translation_tools.models import (
     TranslatedAutoSlugifyMixin,
     TranslationHelperMixin,
 )
+from aldryn_categories.fields import CategoryManyToManyField
 from cms.models.pluginmodel import CMSPlugin
 from cms.utils.i18n import get_current_language, get_default_language
 from djangocms_text_ckeditor.fields import HTMLField
 from filer.fields.image import FilerImageField
 from parler.models import TranslatableModel, TranslatedFields
 
-
+from .managers import PeopleManager, LocationManager
 from .utils import get_additional_styles
+
+
+@python_2_unicode_compatible
+class Location(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
+            TranslatableModel):
+    slug_source_field_name = 'name'
+    translations = TranslatedFields(
+        name = models.CharField(_('Display name'), max_length=255),
+        slug = models.SlugField(
+            _('slug'), max_length=255, default='',
+            blank=True,
+            help_text=_("Leave blank to auto-generate a unique slug.")),
+        office = models.CharField(_('Office name'), max_length=255,
+            blank=True)
+    )
+    address = models.TextField(
+        verbose_name=_('address'), blank=True)
+    postal_code = models.CharField(
+        verbose_name=_('postal code'), max_length=20, blank=True)
+    city = models.CharField(
+        verbose_name=_('city'), max_length=255, blank=True)
+    phone = models.CharField(
+        verbose_name=_('phone'), null=True, blank=True, max_length=100)
+    fax = models.CharField(
+        verbose_name=_('fax'), null=True, blank=True, max_length=100)
+    email = models.EmailField(
+        verbose_name=_('email'), blank=True, default='')
+    website = models.URLField(
+        verbose_name=_('website'), null=True, blank=True)
+    lat = models.FloatField(_('Latitude'), null=True, blank=True)
+    lng = models.FloatField(_('Longitude'), null=True, blank=True)
+    is_published = models.BooleanField(
+        verbose_name=_('show on website'), default=True)
+
+    objects = LocationManager()
+
+    class Meta:
+        verbose_name = 'Location'
+        verbose_name_plural = 'Locations'
+
+    def __str__(self):
+        return self.safe_translation_getter('name')
+
+    def get_absolute_url(self, language=None):
+        if not language:
+            language = get_current_language() or get_default_language()
+        slug, language = self.known_translation_getter(
+            'slug', None, language_code=language)
+        if slug:
+            kwargs = {'slug': slug}
+        else:
+            kwargs = {'pk': self.pk}
+        with override(language):
+            return reverse('aldryn_people:location-detail', kwargs=kwargs)
 
 
 @python_2_unicode_compatible
@@ -104,10 +159,12 @@ class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
 @python_2_unicode_compatible
 class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
              TranslatableModel):
-    slug_source_field_name = 'name'
 
     translations = TranslatedFields(
-        name=models.CharField(
+        first_name=models.CharField(
+            _('name'), max_length=255, blank=False,
+            default='', help_text=_("Provide this person's name.")),
+        last_name=models.CharField(
             _('name'), max_length=255, blank=False,
             default='', help_text=_("Provide this person's name.")),
         slug=models.SlugField(
@@ -119,6 +176,8 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
     )
     phone = models.CharField(
         verbose_name=_('phone'), null=True, blank=True, max_length=100)
+    second_phone = models.CharField(
+        verbose_name=_('secondary phone'), null=True, blank=True, max_length=100)
     mobile = models.CharField(
         verbose_name=_('mobile'), null=True, blank=True, max_length=100)
     fax = models.CharField(
@@ -131,8 +190,8 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         verbose_name=_('twitter'), null=True, blank=True, max_length=100)
     linkedin = models.URLField(
         verbose_name=_('linkedin'), null=True, blank=True, max_length=200)
-    location = models.CharField(
-        verbose_name=_('location'), null=True, blank=True, max_length=100)
+    location = models.ForeignKey('aldryn_people.Location',
+        verbose_name=_('location'), null=True, blank=True)
     website = models.URLField(
         verbose_name=_('website'), null=True, blank=True)
     groups = SortedM2MModelField(
@@ -141,11 +200,20 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
                     'will be the "primary group".'))
     visual = FilerImageField(
         null=True, blank=True, default=None, on_delete=models.SET_NULL)
+    second_visual = FilerImageField(
+        null=True, blank=True, default=None, on_delete=models.SET_NULL,
+        related_name='second_person_visual')
     vcard_enabled = models.BooleanField(
         verbose_name=_('enable vCard download'), default=True)
+    is_published = models.BooleanField(
+        verbose_name=_('show on website'), default=True)
     user = models.OneToOneField(
         getattr(settings, 'AUTH_USER_MODEL', 'auth.User'),
         null=True, blank=True, related_name='persons')
+    categories = CategoryManyToManyField('aldryn_categories.Category',
+         verbose_name=_('categories'), blank=True)
+
+    objects = PeopleManager()
 
     class Meta:
         verbose_name = _('Person')
@@ -156,11 +224,18 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
 
         if six.PY2:
             pkstr = six.u(pkstr)
-        name = self.safe_translation_getter(
-            'name',
-            default='',
-            any_language=True
-        ).strip()
+        name = ' '.join((
+            self.safe_translation_getter(
+                'first_name',
+                default='',
+                any_language=True
+            ),
+            self.safe_translation_getter(
+                'last_name',
+                default='',
+                any_language=True
+            )
+        )).strip()
         return name if len(name) > 0 else pkstr
 
     @property
@@ -206,8 +281,7 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         vcard = Vcard()
         function = self.safe_translation_getter('function')
 
-        safe_name = self.safe_translation_getter(
-            'name', default="Person: {0}".format(self.pk))
+        safe_name = self.name()
         vcard.add_line('FN', safe_name)
         vcard.add_line('N', [None, safe_name, None, None, None])
 
@@ -264,8 +338,11 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
 
         return six.b('{}'.format(vcard))
 
-    def first_name(self):
-        return self.name.split(' ')[0]
+    def get_slug_source(self):
+        return self.__str__()
+
+    def name(self):
+        return self.__str__()
 
 
 @python_2_unicode_compatible
@@ -303,7 +380,7 @@ class BasePeoplePlugin(CMSPlugin):
         self.people = oldinstance.people.all()
 
     def get_selected_people(self):
-        return self.people.select_related('visual')
+        return self.people.published().select_related('visual')
 
     def __str__(self):
         return text_type(self.pk)

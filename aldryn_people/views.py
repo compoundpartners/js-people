@@ -13,7 +13,7 @@ from menus.utils import set_language_changer
 from parler.views import TranslatableSlugMixin
 
 from . import DEFAULT_APP_NAMESPACE
-from .models import Group, Person
+from .models import Location, Group, Person
 
 
 def get_language(request):
@@ -32,6 +32,12 @@ class LanguageChangerMixin(object):
             self.object = self.get_object()
         set_language_changer(request, self.object.get_absolute_url)
         return super(LanguageChangerMixin, self).get(request, *args, **kwargs)
+
+
+class PublishedMixin(object):
+    def get_queryset(self):
+        qs = super(PublishedMixin, self).get_queryset()
+        return qs.published()
 
 
 class AllowPKsTooMixin(object):
@@ -54,7 +60,7 @@ class AllowPKsTooMixin(object):
         return super(AllowPKsTooMixin, self).get_object(queryset)
 
 
-class DownloadVcardView(AllowPKsTooMixin, TranslatableSlugMixin, DetailView):
+class DownloadVcardView(PublishedMixin, AllowPKsTooMixin, TranslatableSlugMixin, DetailView):
     model = Person
 
     def get(self, request, *args, **kwargs):
@@ -62,7 +68,7 @@ class DownloadVcardView(AllowPKsTooMixin, TranslatableSlugMixin, DetailView):
         if not person.vcard_enabled:
             raise Http404
 
-        filename = "%s.vcf" % person.name
+        filename = "%s.vcf" % str(person)
         vcard = person.get_vcard(request)
         try:
             vcard = vcard.decode('utf-8').encode('ISO-8859-1')
@@ -74,7 +80,7 @@ class DownloadVcardView(AllowPKsTooMixin, TranslatableSlugMixin, DetailView):
         return response
 
 
-class PersonDetailView(LanguageChangerMixin, AllowPKsTooMixin,
+class PersonDetailView(PublishedMixin, LanguageChangerMixin, AllowPKsTooMixin,
                        TranslatableSlugMixin, DetailView):
     model = Person
 
@@ -102,7 +108,33 @@ class GroupListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(GroupListView, self).get_context_data(**kwargs)
-        qs_ungrouped = Person.objects.filter(groups__isnull=True)
+        qs_ungrouped = Person.objects.published().filter(groups__isnull=True)
         context['ungrouped_people'] = qs_ungrouped.translated(
             *self.valid_languages)
+        return context
+
+
+class LocationDetailView(PublishedMixin, LanguageChangerMixin, AllowPKsTooMixin,
+                      TranslatableSlugMixin, DetailView):
+    model = Location
+
+
+class LocationListView(PublishedMixin, ListView):
+    model = Location
+
+    def dispatch(self, request, *args, **kwargs):
+        self.request_language = get_language(request)
+        self.request = request
+        self.site_id = getattr(get_current_site(self.request), 'id', None)
+        self.valid_languages = get_valid_languages(
+            DEFAULT_APP_NAMESPACE, self.request_language, self.site_id)
+        return super(LocationListView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        qs = super(LocationListView, self).get_queryset()
+        # prepare language properties for filtering
+        return qs.translated(*self.valid_languages)
+
+    def get_context_data(self, **kwargs):
+        context = super(LocationListView, self).get_context_data(**kwargs)
         return context

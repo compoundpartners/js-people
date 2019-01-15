@@ -12,65 +12,129 @@ from django.utils.translation import ugettext_lazy as _
 from parler.admin import TranslatableAdmin
 from aldryn_translation_tools.admin import AllTranslationsMixin
 
-from .models import Person, Group
+from .models import Person, Group, Location
 
+from .constants import (
+    ALDRYN_PEOPLE_USER_THRESHOLD,
+    ALDRYN_PEOPLE_HIDE_FAX,
+    ALDRYN_PEOPLE_HIDE_WEBSITE,
+    ALDRYN_PEOPLE_HIDE_FACEBOOK,
+    ALDRYN_PEOPLE_HIDE_TWITTER,
+    ALDRYN_PEOPLE_HIDE_LINKEDIN,
+    ALDRYN_PEOPLE_HIDE_GROUPS,
+    ALDRYN_PEOPLE_HIDE_LOCATION,
+    ALDRYN_PEOPLE_HIDE_USER,
+    ALDRYN_PEOPLE_SHOW_SECONDARY_IMAGE,
+    ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE,
+)
 
 class PersonAdmin(PlaceholderAdminMixin,
                   AllTranslationsMixin,
                   TranslatableAdmin):
 
     list_display = [
-        '__str__', 'email', 'vcard_enabled', 'num_groups', ]
-    list_filter = ['groups', 'vcard_enabled']
-    search_fields = ('translations__name', 'email', 'translations__function')
+        '__str__', 'email', 'is_published', 'vcard_enabled', ]
+    if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
+        list_display += ['num_groups',]
+        list_filter = ['is_published', 'groups', 'vcard_enabled']
+    else:
+        list_filter = ['is_published', 'vcard_enabled']
+
+    search_fields = ('translations__first_name', 'translations__last_name', 'email', 'translations__function')
+
+    filter_horizontal = [
+        'categories',
+    ]
 
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
         """
         Determines if the User widget should be a drop-down or a raw ID field.
         """
-        # This is a hack to use until get_raw_id_fields() lands in Django:
-        # https://code.djangoproject.com/ticket/17881.
-        if db_field.name in ['user', ]:
-            threshold = getattr(
-                settings, 'ALDRYN_PEOPLE_USER_THRESHOLD', 50)
-            model = Person._meta.get_field('user').model
-            if model.objects.count() > threshold:
-                kwargs['widget'] = admin.widgets.ForeignKeyRawIdWidget(
-                    db_field.rel, self.admin_site, using=kwargs.get('using'))
-                return db_field.formfield(**kwargs)
+        if ALDRYN_PEOPLE_HIDE_USER == 0:
+            # This is a hack to use until get_raw_id_fields() lands in Django:
+            # https://code.djangoproject.com/ticket/17881.
+            if db_field.name in ['user', ]:
+                model = Person._meta.get_field('user').model
+                if model.objects.count() > ALDRYN_PEOPLE_USER_THRESHOLD:
+                    kwargs['widget'] = admin.widgets.ForeignKeyRawIdWidget(
+                        db_field.rel, self.admin_site, using=kwargs.get('using'))
+                    return db_field.formfield(**kwargs)
         return super(PersonAdmin, self).formfield_for_foreignkey(
             db_field, request, **kwargs)
+
+    contact_fields = (
+        'visual',
+    )
+    if ALDRYN_PEOPLE_SHOW_SECONDARY_IMAGE != 0:
+        contact_fields += (
+            'second_visual',
+        )
+    contact_fields += (
+        'email',
+        'mobile',
+        'phone',
+    )
+    if ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE != 0:
+        contact_fields += (
+            'second_phone',
+        )
+    if ALDRYN_PEOPLE_HIDE_FAX == 0:
+        contact_fields += (
+            'fax',
+        )
+    if ALDRYN_PEOPLE_HIDE_WEBSITE == 0:
+        contact_fields += (
+            'website',
+        )
+    if ALDRYN_PEOPLE_HIDE_FACEBOOK == 0:
+        contact_fields += (
+            'facebook',
+        )
+    if ALDRYN_PEOPLE_HIDE_TWITTER == 0:
+        contact_fields += (
+            'twitter',
+        )
+    if ALDRYN_PEOPLE_HIDE_LINKEDIN == 0:
+        contact_fields += (
+            'linkedin',
+        )
+    if ALDRYN_PEOPLE_HIDE_LOCATION == 0:
+        contact_fields += (
+            'location',
+        )
+    contact_fields += (
+        'vcard_enabled',
+    )
+    if ALDRYN_PEOPLE_HIDE_USER == 0:
+        contact_fields += (
+            'user',
+        )
 
     fieldsets = (
         (None, {
             'fields': (
-                'name',
+                'first_name',
+                'last_name',
                 'slug',
-                'function', 'description',
+                'function', 'description', 'is_published',
             ),
         }),
         (_('Contact (untranslated)'), {
-            'fields': (
-                'visual',
-                'phone',
-                'mobile',
-                'fax',
-                'email',
-                'website',
-                'facebook',
-                'twitter',
-                'linkedin',
-                'location',
-                'user',
-                'vcard_enabled'
-            ),
-        }),
-        (None, {
-            'fields': (
-                'groups',
-            ),
+            'fields': contact_fields,
         }),
     )
+    if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
+        fieldsets += ((None, {
+            'fields': (
+                'groups', 'categories',
+            ),
+        }),)
+    else:
+        fieldsets += ((None, {
+            'fields': (
+                'categories',
+            ),
+        }),)
 
     def get_queryset(self, request):
         qs = super(PersonAdmin, self).get_queryset(request)
@@ -121,5 +185,40 @@ class GroupAdmin(PlaceholderAdminMixin,
     num_people.admin_order_field = 'people_count'
 
 
+class LocationAdmin(PlaceholderAdminMixin,
+                 AllTranslationsMixin,
+                 TranslatableAdmin):
+    list_display = ['__str__', 'office', 'city', 'is_published',]
+    search_filter = ['translations__name', 'translations__office']
+    fieldsets = (
+        (None, {
+            'fields': (
+                'name',
+                'slug',
+                'office',
+                'is_published',
+            ),
+        }),
+        (_('Contact (untranslated)'), {
+            'fields': (
+                'phone',
+                'fax',
+                'email',
+                'website',
+                'address',
+                'postal_code',
+                'city',
+                'lat',
+                'lng'
+            )
+        }),
+    )
+
+
 admin.site.register(Person, PersonAdmin)
-admin.site.register(Group, GroupAdmin)
+
+if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
+    admin.site.register(Group, GroupAdmin)
+
+if ALDRYN_PEOPLE_HIDE_LOCATION == 0:
+    admin.site.register(Location, LocationAdmin)
