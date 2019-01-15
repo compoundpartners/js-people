@@ -32,8 +32,62 @@ from djangocms_text_ckeditor.fields import HTMLField
 from filer.fields.image import FilerImageField
 from parler.models import TranslatableModel, TranslatedFields
 
-from .managers import PeopleManager
+from .managers import PeopleManager, LocationManager
 from .utils import get_additional_styles
+
+
+@python_2_unicode_compatible
+class Location(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
+            TranslatableModel):
+    slug_source_field_name = 'name'
+    translations = TranslatedFields(
+        name = models.CharField(_('Display name'), max_length=255),
+        slug = models.SlugField(
+            _('slug'), max_length=255, default='',
+            blank=True,
+            help_text=_("Leave blank to auto-generate a unique slug.")),
+        office = models.CharField(_('Office name'), max_length=255,
+            blank=True)
+    )
+    address = models.TextField(
+        verbose_name=_('address'), blank=True)
+    postal_code = models.CharField(
+        verbose_name=_('postal code'), max_length=20, blank=True)
+    city = models.CharField(
+        verbose_name=_('city'), max_length=255, blank=True)
+    phone = models.CharField(
+        verbose_name=_('phone'), null=True, blank=True, max_length=100)
+    fax = models.CharField(
+        verbose_name=_('fax'), null=True, blank=True, max_length=100)
+    email = models.EmailField(
+        verbose_name=_('email'), blank=True, default='')
+    website = models.URLField(
+        verbose_name=_('website'), null=True, blank=True)
+    lat = models.FloatField(_('Latitude'), null=True, blank=True)
+    lng = models.FloatField(_('Longitude'), null=True, blank=True)
+    is_published = models.BooleanField(
+        verbose_name=_('show on website'), default=True)
+
+    objects = LocationManager()
+
+    class Meta:
+        verbose_name = 'Location'
+        verbose_name_plural = 'Locations'
+
+    def __str__(self):
+        return self.safe_translation_getter('name')
+
+    def get_absolute_url(self, language=None):
+        if not language:
+            language = get_current_language() or get_default_language()
+        slug, language = self.known_translation_getter(
+            'slug', None, language_code=language)
+        if slug:
+            kwargs = {'slug': slug}
+        else:
+            kwargs = {'pk': self.pk}
+        with override(language):
+            return reverse('aldryn_people:location-detail', kwargs=kwargs)
 
 
 @python_2_unicode_compatible
@@ -136,8 +190,8 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         verbose_name=_('twitter'), null=True, blank=True, max_length=100)
     linkedin = models.URLField(
         verbose_name=_('linkedin'), null=True, blank=True, max_length=200)
-    location = models.CharField(
-        verbose_name=_('location'), null=True, blank=True, max_length=100)
+    location = models.ForeignKey('aldryn_people.Location',
+        verbose_name=_('location'), null=True, blank=True)
     website = models.URLField(
         verbose_name=_('website'), null=True, blank=True)
     groups = SortedM2MModelField(

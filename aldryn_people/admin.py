@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from parler.admin import TranslatableAdmin
 from aldryn_translation_tools.admin import AllTranslationsMixin
 
-from .models import Person, Group
+from .models import Person, Group, Location
 
 from .constants import (
     ALDRYN_PEOPLE_USER_THRESHOLD,
@@ -22,6 +22,7 @@ from .constants import (
     ALDRYN_PEOPLE_HIDE_TWITTER,
     ALDRYN_PEOPLE_HIDE_LINKEDIN,
     ALDRYN_PEOPLE_HIDE_GROUPS,
+    ALDRYN_PEOPLE_HIDE_LOCATION,
     ALDRYN_PEOPLE_HIDE_USER,
     ALDRYN_PEOPLE_SHOW_SECONDARY_IMAGE,
     ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE,
@@ -97,9 +98,12 @@ class PersonAdmin(PlaceholderAdminMixin,
         contact_fields += (
             'linkedin',
         )
+    if ALDRYN_PEOPLE_HIDE_LOCATION == 0:
+        contact_fields += (
+            'location',
+        )
     contact_fields += (
-        'location',
-        'vcard_enabled'
+        'vcard_enabled',
     )
     if ALDRYN_PEOPLE_HIDE_USER == 0:
         contact_fields += (
@@ -181,7 +185,40 @@ class GroupAdmin(PlaceholderAdminMixin,
     num_people.admin_order_field = 'people_count'
 
 
+class LocationAdmin(PlaceholderAdminMixin,
+                 AllTranslationsMixin,
+                 TranslatableAdmin):
+    list_display = ['__str__', 'office', 'city', 'is_published',]
+    search_filter = ['translations__name', 'translations__office']
+    fieldsets = (
+        (None, {
+            'fields': (
+                'name',
+                'slug',
+                'office',
+                'is_published',
+            ),
+        }),
+        (_('Contact (untranslated)'), {
+            'fields': (
+                'phone',
+                'fax',
+                'email',
+                'website',
+                'address',
+                'postal_code',
+                'city',
+                'lat',
+                'lng'
+            )
+        }),
+    )
+
+
 admin.site.register(Person, PersonAdmin)
 
 if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
     admin.site.register(Group, GroupAdmin)
+
+if ALDRYN_PEOPLE_HIDE_LOCATION == 0:
+    admin.site.register(Location, LocationAdmin)

@@ -11,7 +11,8 @@ from cms.wizards.forms import BaseFormMixin
 
 from parler.forms import TranslatableModelForm
 
-from .models import Group, Person
+from .models import Group, Person, Location
+from .constants import ALDRYN_PEOPLE_HIDE_GROUPS, ALDRYN_PEOPLE_HIDE_LOCATION
 
 
 def has_published_apphook():
@@ -65,6 +66,20 @@ class PeopleGroupWizard(BasePeopleWizard):
         return False
 
 
+class PeopleLocationWizard(BasePeopleWizard):
+
+    def user_has_add_permission(self, user, **kwargs):
+        """
+        Return True if the current user has permission to add a location.
+        :param user: The current user
+        :param kwargs: Ignored here
+        :return: True if user has add permission, else False
+        """
+        if user.is_superuser or user.has_perm("aldryn_people.add_location"):
+            return True
+        return False
+
+
 class CreatePeoplePersonForm(BaseFormMixin, TranslatableModelForm):
     class Meta:
         model = Person
@@ -90,6 +105,13 @@ class CreatePeopleGroupForm(BaseFormMixin, TranslatableModelForm):
                   'phone', 'email', 'website']
 
 
+class CreatePeopleLocationForm(BaseFormMixin, TranslatableModelForm):
+    class Meta:
+        model = Location
+        fields = ['name', 'office', 'address', 'postal_code', 'city',
+                  'phone', 'email', 'website']
+
+
 people_person_wizard = PeoplePersonWizard(
     title=_('New person'),
     weight=300,
@@ -97,7 +119,7 @@ people_person_wizard = PeoplePersonWizard(
     description=_("Create a new person.")
 )
 
-wizard_pool.register(people_person_wizard)
+#wizard_pool.register(people_person_wizard)
 
 
 people_group_wizard = PeopleGroupWizard(
@@ -107,6 +129,18 @@ people_group_wizard = PeopleGroupWizard(
     description=_("Create a new group.")
 )
 
+people_location_wizard = PeopleLocationWizard(
+    title=_('New location'),
+    weight=300,
+    form=CreatePeopleLocationForm,
+    description=_("Create a new location.")
+)
+
+if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
+    wizard_pool.register(people_group_wizard)
+
+if ALDRYN_PEOPLE_HIDE_LOCATION == 0:
+    wizard_pool.register(people_location_wizard)
 # Disabling the group wizard by default. To enable, create a file
 # cms_wizards.py in your project and add the following lines:
 

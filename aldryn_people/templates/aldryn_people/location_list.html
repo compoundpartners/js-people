@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n cms_tags %}
+
+{% block title %}Locations - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h2>Locations</h2>
+
+    <ul>
+    {% for location in location_list %}
+        <li><a href="{{ location.get_absolute_url }}">{% render_model location 'name' %}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock content %}
