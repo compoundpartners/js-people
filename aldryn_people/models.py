@@ -162,11 +162,11 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
 
     translations = TranslatedFields(
         first_name=models.CharField(
-            _('name'), max_length=255, blank=False,
-            default='', help_text=_("Provide this person's name.")),
+            _('first name'), max_length=255, blank=False,
+            default='', help_text=_("Provide this person's first name.")),
         last_name=models.CharField(
-            _('name'), max_length=255, blank=False,
-            default='', help_text=_("Provide this person's name.")),
+            _('last name'), max_length=255, blank=False,
+            default='', help_text=_("Provide this person's last name.")),
         slug=models.SlugField(
             _('unique slug'), max_length=255, blank=True,
             default='',
