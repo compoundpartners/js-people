@@ -1,0 +1,69 @@
+{% load i18n thumbnail cms_tags aldryn_people_tags %}
+
+    <h4>
+        <a href="{{ person.get_absolute_url }}">{{ person.name }}</a>
+        <small>{{ person.function }}</small>
+    </h4>
+    {% if person.visual %}
+        <p>
+            <a href="{{ person.get_absolute_url }}">
+                <img src="{% thumbnail person.visual 200x100 crop subject_location=person.visual.subject_location %}" alt="{{ person.name }}">
+            </a>
+        </p>
+    {% endif %}
+
+    <p>
+        {% if person.phone %}
+            <strong>{% trans "Phone:" %}</strong>
+            {{ person.phone|phoneformat }}<br>
+        {% endif %}
+        {% if person.mobile %}
+            <strong>{% trans "Mobile:" %}</strong>
+            {{ person.mobile|phoneformat }}<br>
+        {% endif %}
+        {% if person.fax %}
+            <strong>{% trans "Fax:" %}</strong>
+            {{ person.fax }}<br>
+        {% endif %}
+        {% if person.email %}
+            <strong>{% trans "Email:" %}</strong>
+            <a href="mailto:{{ person.email }}">{{ person.email }}</a><br>
+        {% endif %}
+
+        {% if person.facebook %}
+            <strong>{% trans "Facebook:" %}</strong>
+            <span class="fa fa-fw fa-facebook" aria-hidden="true"></span>
+            <a href="{{ person.facebook }}" target="_blank">Facebook</a><br>
+        {% endif %}
+
+        {% if person.twitter %}
+            <strong>{% trans "Twitter:" %}</strong>
+            <span class="fa fa-fw fa-twitter" aria-hidden="true"></span>
+            <a href="https://twitter.com/oliverashford{{ person.twitter }}" target="_blank">@{{ person.twitter }}</a><br>
+        {% endif %}
+
+        {% if person.linkedin %}
+            <strong>{% trans "LinkeIn:" %}</strong>
+            <span class="fa fa-fw fa-linkedin" aria-hidden="true"></span>
+            <a href="{{ person.linkedin }}" target="_blank">LinkedIn</a><br>
+        {% endif %}
+
+        {% if person.location %}
+            <strong>{% trans "Location:" %}</strong>
+            {{ person.location }}<br>
+        {% endif %}
+
+        {% if person.website %}
+            <strong>{% trans "Website:" %}</strong>
+            <a href="{{ person.website }}" target="_blank">{{ person.website }}</a><br>
+        {% endif %}
+    </p>
+    {% if person.description %}
+        {{ person.description|safe }}
+    {% endif %}
+
+    {% if person.vcard_enabled and person.get_vcard_url %}
+        <a href="{{ person.get_vcard_url }}">
+            {% trans "Download vCard" %}
+        </a>
+    {% endif %}

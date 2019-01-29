@@ -1,0 +1,29 @@
+.selector .selector-down, .selector .selector-up {
+    font-size: 0;
+    text-indent: 0;
+    width: 22px;
+    height: 22px;
+    background: 0 0;
+    opacity: .5;
+}
+.selector .selector-down:before, .selector .selector-up:before {
+    vertical-align: middle;
+    margin-right: 5px;
+    margin: 0;
+    display: inline-block;
+    font: normal normal normal 22px/1 django-admin-iconfont;
+    text-rendering: auto;
+    transform: translate(0,0);
+    -webkit-font-smoothing: antialiased;
+}
+
+.selector-down:before {
+    content: "\E009";
+}
+.selector-up:before {
+    content: "\E00C";
+}
+
+.selector .selector-available.ordered, .selector .selector-chosen.ordered {
+    width: calc(45% - 10px);
+}

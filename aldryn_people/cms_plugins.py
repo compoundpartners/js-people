@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
 
-from aldryn_people import models, DEFAULT_APP_NAMESPACE
+from aldryn_people import models, forms, DEFAULT_APP_NAMESPACE
 from .utils import get_valid_languages
 
 
@@ -89,3 +89,39 @@ class PeoplePlugin(CMSPluginBase):
 
 
 plugin_pool.register_plugin(PeoplePlugin)
+
+
+@plugin_pool.register_plugin
+class RelatedPeoplePlugin(CMSPluginBase):
+    TEMPLATE_NAME = 'aldryn_people/plugins/related_people__%s.html'
+    module = 'People'
+    render_template = TEMPLATE_NAME % forms.LAYOUT_CHOICES[0][0]
+    name = _('Related People')
+    model = models.RelatedPeoplePlugin
+    form = forms.RelatedPeoplePluginForm
+
+    def render(self, context, instance, placeholder):
+        request = context.get('request')
+        context['instance'] = instance
+        context['title'] = instance.title
+        context['icon'] = instance.icon
+        context['image'] = instance.image
+
+        qs = instance.related_people.published()
+        related_groups = instance.related_groups.all()
+        related_locations = instance.related_locations.all()
+        related_categories = instance.related_categories.all()
+
+        if not qs.exists():
+            qs = models.Person.objects.published().distinct()
+            if related_groups.exists():
+                qs = qs.filter(groups__in=related_groups)
+            if related_locations.exists():
+                qs = qs.filter(location__in=related_locations)
+            if related_groups.exists():
+                qs = qs.filter(categories__in=related_categories)
+
+        context['related_people'] = qs[:int(instance.number_of_people)]
+
+        return context
+

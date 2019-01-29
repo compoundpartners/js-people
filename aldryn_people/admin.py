@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from parler.admin import TranslatableAdmin
 from aldryn_translation_tools.admin import AllTranslationsMixin
+from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 
 from .models import Person, Group, Location
 
@@ -61,6 +62,12 @@ class PersonAdmin(PlaceholderAdminMixin,
                     return db_field.formfield(**kwargs)
         return super(PersonAdmin, self).formfield_for_foreignkey(
             db_field, request, **kwargs)
+
+    def formfield_for_manytomany(self, db_field, request=None, **kwargs):
+        #if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
+        if db_field.name == 'groups':
+            kwargs['widget'] = SortedFilteredSelectMultiple()
+        return super(PersonAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
     contact_fields = (
         'visual',
