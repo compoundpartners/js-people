@@ -125,3 +125,5 @@ class RelatedPeoplePlugin(CMSPluginBase):
 
         return context
 
+    def get_render_template(self, context, instance, placeholder):
+        return self.TEMPLATE_NAME % instance.layout

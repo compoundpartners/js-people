@@ -30,114 +30,6 @@ LAYOUT_CHOICES = [
 
 STATIC_URL = getattr(settings, 'STATIC_URL', settings.MEDIA_URL)
 
-class JSSortedFilteredSelectMultiple(SortedFilteredSelectMultiple):
-
-    class Media:
-        extend = False
-        css = {
-            'screen': (STATIC_URL + 'js_admin_widgets/OrderedSelectFilter.css',)
-        }
-
-        js = (STATIC_URL + 'js_admin_widgets/OrderedSelectBox.js',
-              STATIC_URL + 'js_admin_widgets/OrderedSelectFilter.js',
-        )
-
-    def build_attrs(self, attrs=None, extra_attrs=None, **kwargs):
-        attrs = dict(attrs, **kwargs)
-        if extra_attrs:
-            attrs.update(extra_attrs)
-        classes = attrs.setdefault('class', '').split()
-        classes.append('sortedm2m')
-        if self.is_stacked: classes.append('stacked')
-        attrs['class'] = u' '.join(classes)
-        return attrs
-
-    def render(self, name, value, attrs=None, choices=()):
-        if attrs is None: attrs = {}
-        if value is None: value = []
-        admin_media_prefix = getattr(settings, 'ADMIN_MEDIA_PREFIX', STATIC_URL + 'admin/')
-        final_attrs = self.build_attrs(self.attrs, attrs, name=name)
-        output = [u'<select multiple="multiple"%s>' % flatatt(final_attrs)]
-        options = self.render_options(choices, value)
-        if options:
-            output.append(options)
-        if 'verbose_name' in final_attrs.keys():
-            verbose_name = final_attrs['verbose_name']
-        else:
-            verbose_name = name.split('-')[-1]
-        if 'verbose_name_plural' in final_attrs.keys():
-            verbose_name_plural = final_attrs['verbose_name_plural']
-        else:
-            verbose_name_plural = verbose_name
-        output.append(u'</select>')
-        output.append(u'<script>window.addEventListener("load", function(e) {')
-        output.append(u'OrderedSelectFilter.init("id_%s", "%s", "%s", %s, "%s") });</script>\n' % \
-                      (name, verbose_name, verbose_name_plural, int(self.is_stacked), admin_media_prefix))
-        output.append(u"""
-        <script>
-        (function($) {
-            $(document).ready(function() {
-                var updateOrderedSelectFilter = function() {
-                    // If any SelectFilter widgets are a part of the new form,
-                    // instantiate a new SelectFilter instance for it.
-                    if (typeof OrderedSelectFilter != "undefined"){
-                        $(".sortedm2m").each(function(index, value){
-                            var namearr = value.name.split('-');
-                            OrderedSelectFilter.init(value.id, namearr[namearr.length-1], namearr[namearr.length-1], false, "%s");
-                        });
-                        $(".sortedm2mstacked").each(function(index, value){
-                            var namearr = value.name.split('-');
-                            OrderedSelectFilter.init(value.id, namearr[namearr.length-1], namearr[namearr.length-1], true, "%s");
-                        });
-                    }
-                }
-                $(document).on('formset:added', function(row, prefix) {
-                    updateOrderedSelectFilter();
-                });
-            });
-        })(django.jQuery)
-        </script>""" % (admin_media_prefix, admin_media_prefix))
-
-        return mark_safe(u'\n'.join(output))
-
-    def render_option(self, selected_choices, option_value, option_label):
-        option_value = force_text(option_value)
-        selected_html = (option_value in selected_choices) and u' selected="selected"' or ''
-        try:
-            index = list(selected_choices).index(escape(option_value))
-            selected_html = u'%s %s' % (u' data-sort-value="%s"' % index, selected_html)
-        except ValueError:
-            pass
-
-        return u'<option value="%s"%s>%s</option>' % (
-            escape(option_value), selected_html,
-            conditional_escape(force_text(option_label)))
-
-    def render_options(self, choices, selected_choices):
-        # Normalize to strings.
-        selected_choices = list(force_text(v) for v in selected_choices)
-        output = []
-        for option_value, option_label in chain(self.choices, choices):
-            if isinstance(option_label, (list, tuple)):
-                output.append(u'<optgroup label="%s">' % escape(force_text(option_value)))
-                for option in option_label:
-                    output.append(self.render_option(selected_choices, *option))
-                output.append(u'</optgroup>')
-            else:
-                output.append(self.render_option(selected_choices, option_value, option_label))
-        return u'\n'.join(output)
-
-    def _has_changed(self, initial, data):
-        if initial is None:
-            initial = []
-        if data is None:
-            data = []
-        if len(initial) != len(data):
-            return True
-        initial_set = [force_text(value) for value in initial]
-        data_set = [force_text(value) for value in data]
-        return data_set != initial_set
-
 
 class RelatedPeoplePluginForm(forms.ModelForm):
 
@@ -147,7 +39,7 @@ class RelatedPeoplePluginForm(forms.ModelForm):
         label='key people',
         queryset=models.Person.objects.all(),
         required=False,
-        widget=JSSortedFilteredSelectMultiple(attrs={'verbose_name':'person', 'verbose_name_plural':'people'})
+        widget=SortedFilteredSelectMultiple(attrs={'verbose_name':'person', 'verbose_name_plural':'people'})
     )
     related_groups = forms.ModelMultipleChoiceField(
         queryset=models.Group.objects.all(),

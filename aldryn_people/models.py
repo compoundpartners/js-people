@@ -214,6 +214,8 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         null=True, blank=True, related_name='persons')
     categories = CategoryManyToManyField('aldryn_categories.Category',
          verbose_name=_('categories'), blank=True)
+    services = SortedManyToManyField('js_services.Service',
+         verbose_name=_('services'), blank=True)
 
     objects = PeopleManager()
 
