@@ -428,11 +428,13 @@ class RelatedPeoplePlugin(CMSPlugin):
     related_groups = SortedM2MModelField(Group, verbose_name=_('related groups'), blank=True, symmetrical=False)
     related_locations = SortedM2MModelField(Location, verbose_name=_('related locations'), blank=True, symmetrical=False)
     related_categories = SortedM2MModelField('aldryn_categories.Category', verbose_name=_('related categories'), blank=True, symmetrical=False)
+    related_services = SortedM2MModelField('js_services.Service', verbose_name=_('related services'), blank=True, symmetrical=False)
 
     def copy_relations(self, oldinstance):
         self.related_people = oldinstance.related_people.all()
         self.related_groups = oldinstance.related_groups.all()
         self.related_locations = oldinstance.related_locations.all()
+        self.related_services = oldinstance.related_services.all()
         self.related_categories = oldinstance.related_categories.all()
 
     def __str__(self):

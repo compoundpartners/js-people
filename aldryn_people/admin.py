@@ -52,9 +52,9 @@ class PersonAdmin(PlaceholderAdminMixin,
         '__str__', 'email', 'is_published', 'vcard_enabled', ]
     if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
         list_display += ['num_groups',]
-        list_filter = ['is_published', 'groups', 'vcard_enabled']
+        list_filter = ['is_published', 'services', 'groups', 'vcard_enabled']
     else:
-        list_filter = ['is_published', 'vcard_enabled']
+        list_filter = ['is_published', 'services', 'vcard_enabled']
 
     search_fields = ('translations__first_name', 'translations__last_name', 'email', 'translations__function')
 
@@ -82,6 +82,8 @@ class PersonAdmin(PlaceholderAdminMixin,
         if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
             if db_field.name == 'groups':
                 kwargs['widget'] = SortedFilteredSelectMultiple()
+        if db_field.name == 'services':
+            kwargs['widget'] = SortedFilteredSelectMultiple()
         return super(PersonAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
     contact_fields = (

@@ -5,15 +5,8 @@ from django.conf import settings
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from aldryn_categories.models import Category
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple, SortedMultipleChoiceField
-from itertools import chain
-from django.utils.encoding import force_text
-from django.utils.html import conditional_escape, escape
 from django.utils.safestring import mark_safe
-try:
-    from django.forms.utils import flatatt
-except ImportError:
-    from django.forms.util import flatatt
-
+from js_services.models import Service
 from . import models
 
 from .constants import (
@@ -55,6 +48,11 @@ class RelatedPeoplePluginForm(forms.ModelForm):
         queryset=Category.objects.all(),
         required=False,
         widget=FilteredSelectMultiple('categories', False)
+    )
+    related_services = forms.ModelMultipleChoiceField(
+        queryset=Service.objects.all(),
+        required=False,
+        widget=FilteredSelectMultiple('services', False)
     )
 
 
