@@ -36,6 +36,7 @@ from parler.models import TranslatableModel, TranslatedFields
 
 from .managers import PeopleManager, LocationManager
 from .utils import get_additional_styles
+from . import DEFAULT_APP_NAMESPACE
 
 
 @python_2_unicode_compatible
@@ -89,7 +90,7 @@ class Location(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         else:
             kwargs = {'pk': self.pk}
         with override(language):
-            return reverse('aldryn_people:location-detail', kwargs=kwargs)
+            return reverse('%s:location-detail' % DEFAULT_APP_NAMESPACE, kwargs=kwargs)
 
 
 @python_2_unicode_compatible
@@ -155,7 +156,7 @@ class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         else:
             kwargs = {'pk': self.pk}
         with override(language):
-            return reverse('aldryn_people:group-detail', kwargs=kwargs)
+            return reverse('%s:group-detail' % DEFAULT_APP_NAMESPACE, kwargs=kwargs)
 
 
 @python_2_unicode_compatible
@@ -264,7 +265,7 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
             # do not fail with 500 error so that if detail view can't be
             # resolved we still can use plugins.
             try:
-                url = reverse('aldryn_people:person-detail', kwargs=kwargs)
+                url = reverse('%s:person-detail' % DEFAULT_APP_NAMESPACE, kwargs=kwargs)
             except NoReverseMatch:
                 url = ''
         return url
@@ -279,7 +280,7 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         else:
             kwargs = {'pk': self.pk}
         with override(language):
-            return reverse('aldryn_people:download_vcard', kwargs=kwargs)
+            return reverse('%s:download_vcard' % DEFAULT_APP_NAMESPACE, kwargs=kwargs)
 
     def get_vcard(self, request=None):
         vcard = Vcard()

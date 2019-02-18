@@ -9,7 +9,7 @@
                 {{ person.name }}
             {% endif %}
         {% else %}
-            {% render_model person 'first_name' %} {% render_model person 'last_name' %}
+            {{ person.name }}
         {% endif %}
         <small>{{ person.function }}</small>
     {% if not group %}</h2>{% else %}</h3>{% endif %}

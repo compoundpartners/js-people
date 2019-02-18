@@ -13,6 +13,7 @@ from parler.forms import TranslatableModelForm
 
 from .models import Group, Person, Location
 from .constants import ALDRYN_PEOPLE_HIDE_GROUPS, ALDRYN_PEOPLE_HIDE_LOCATION
+from . import DEFAULT_APP_NAMESPACE
 
 
 def has_published_apphook():
@@ -20,7 +21,7 @@ def has_published_apphook():
     Returns a list of app_configs that are attached to a published page.
     """
     try:
-        reverse('aldryn_people:group-list')
+        reverse('%s:group-list' % DEFAULT_APP_NAMESPACE)
         return True
     except NoReverseMatch:
         pass

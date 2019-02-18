@@ -12,7 +12,7 @@ from parler.models import TranslatableModel
 
 from .models import Group, Person, Location
 from .constants import ALDRYN_PEOPLE_HIDE_GROUPS, ALDRYN_PEOPLE_HIDE_LOCATION
-
+from . import DEFAULT_APP_NAMESPACE
 
 
 def get_obj_from_request(model, request,
@@ -77,19 +77,19 @@ class PeopleToolbar(CMSToolbar):
         if user and view_name:
             language = get_language_from_request(self.request, check_path=True)
             group = person = location = None
-            if view_name == 'aldryn_people:group-detail':
+            if view_name == '%s:group-detail' % DEFAULT_APP_NAMESPACE:
                 if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
                     group = get_obj_from_request(Group, self.request)
-            elif view_name == 'aldryn_people:location-detail':
+            elif view_name == '%s:location-detail' % DEFAULT_APP_NAMESPACE:
                 if ALDRYN_PEOPLE_HIDE_LOCATION == 0:
                     location = get_obj_from_request(Location, self.request)
             elif view_name in [
-                    'aldryn_people:person-detail',
-                    'aldryn_people:download_vcard']:
+                    '%s:person-detail' % DEFAULT_APP_NAMESPACE,
+                    '%s:download_vcard' % DEFAULT_APP_NAMESPACE]:
                 person = get_obj_from_request(Person, self.request)
                 if person and person.groups:
                     group = person.primary_group
-            elif view_name in ['aldryn_people:group-list', 'aldryn_people:location-list',]:
+            elif view_name in ['%s:group-list' % DEFAULT_APP_NAMESPACE, '%s:location-list' % DEFAULT_APP_NAMESPACE,]:
                 pass
             else:
                 # We don't appear to be on any aldryn_people views so this
