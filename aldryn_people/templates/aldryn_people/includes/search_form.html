@@ -1,0 +1,34 @@
+{% load crispy_forms_field %}
+    <form action="{% url 'js_people:search' %}">
+        <div class="row">
+            <div class="col">
+                <h5>Search the directory</h5>
+                <div class="input-group mb-3">
+                  {% crispy_field filter.form.q 'class' 'form-control' %}
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">GO</button>
+                  </div>
+                </div>
+            </div>
+            <div class="col">
+                <h5>Filter</h5>
+                <div class="form-group">
+                    {% crispy_field filter.form.categories 'class' 'form-control' %}
+                </div>
+                <div class="form-group">
+                    {% crispy_field filter.form.services 'class' 'form-control' %}
+                </div>
+                <div class="form-group">
+                    {% crispy_field filter.form.location 'class' 'form-control' %}
+                </div>
+            </div>
+            <div class="col">
+                <h5>Filter by surname</h5>
+                <div class="row">
+                  {% for letter in "abcdefghijklmnopqrstuvwxyz" %}
+                  <div class="col"><a href="{% url 'js_people:search' %}?letter={{ letter }}" class="btn{% if letter == filter.form.letter.value %} btn-info{% else %} btn-light{% endif %}">{{ letter|upper }}</a></div>
+                  {% endfor %}
+                </div>
+            </div>
+        </div>
+    </form>

@@ -70,5 +70,7 @@ class Form(forms.BaseForm):
         settings['ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE'] = int(data['secondary_phone'])
         settings['ALDRYN_PEOPLE_SUMMARY_RICHTEXT'] = int(data['summary_richtext'])
         settings['INSTALLED_APPS'].append('sortedm2m_filter_horizontal_widget')
+        settings['INSTALLED_APPS'].append('django_filters')
+        settings['INSTALLED_APPS'].append('crispy_forms')
 
         return settings

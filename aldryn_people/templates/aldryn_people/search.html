@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load i18n cms_tags crispy_forms_field %}
+
+{% block title %}People search - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h2>People search</h2>
+    {% include "aldryn_people/includes/search_form.html" %}
+    {% for person in filter.qs %}
+        {% include "aldryn_people/includes/person.html" with person=person %}
+    {% endfor %}
+{% endblock content %}

@@ -18,5 +18,4 @@ class PeopleApp(CMSApp):
     def get_urls(self, *args, **kwargs):
         return self.urls
 
-
 apphook_pool.register(PeopleApp)

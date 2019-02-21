@@ -14,6 +14,7 @@ from parler.views import TranslatableSlugMixin
 
 from . import DEFAULT_APP_NAMESPACE
 from .models import Location, Group, Person
+from .filters import PeopleFilters
 
 
 def get_language(request):
@@ -21,6 +22,15 @@ def get_language(request):
     if lang is None:
         lang = get_language_from_request(request, check_path=True)
     return lang
+
+
+class FilterMixin(object):
+
+    def get_context_data(self, **kwargs):
+        data = super(FilterMixin, self).get_context_data(**kwargs)
+        data['filter'] = PeopleFilters(
+            self.request.GET, queryset=data['object_list'])
+        return data
 
 
 class LanguageChangerMixin(object):
@@ -137,4 +147,27 @@ class LocationListView(PublishedMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(LocationListView, self).get_context_data(**kwargs)
+        return context
+
+
+class SearchView(FilterMixin, PublishedMixin, ListView):
+    model = Person
+    template_name = 'aldryn_people/search.html'
+
+
+    def dispatch(self, request, *args, **kwargs):
+        self.request_language = get_language(request)
+        self.request = request
+        self.site_id = getattr(get_current_site(self.request), 'id', None)
+        self.valid_languages = get_valid_languages(
+            DEFAULT_APP_NAMESPACE, self.request_language, self.site_id)
+        return super(SearchView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        qs = super(SearchView, self).get_queryset()
+        # prepare language properties for filtering
+        return qs.translated(*self.valid_languages)
+
+    def get_context_data(self, **kwargs):
+        context = super(SearchView, self).get_context_data(**kwargs)
         return context

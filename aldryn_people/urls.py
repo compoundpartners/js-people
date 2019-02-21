@@ -11,9 +11,13 @@ from aldryn_people.views import (
     GroupDetailView,
     GroupListView,
     PersonDetailView,
+    SearchView,
 )
 
 urlpatterns = [
+    url(r'^search/$',
+        SearchView.as_view(), name='search'),
+
     url(r'^location/(?P<pk>[0-9]+)/$',
         LocationDetailView.as_view(), name='location-detail'),
     url(r'^location/(?P<slug>[A-Za-z0-9_\-]+)/$',

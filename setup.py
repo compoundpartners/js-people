@@ -14,6 +14,8 @@ REQUIREMENTS = [
     'easy-thumbnails',
     'phonenumbers',
     'six',
+    'django-filter',
+    'django-crispy-forms',
 
     # DO NOT REMOVE THE FOLLOWING, IT IS REQUIRED FOR EXISTING MIGRATIONS
     'django-phonenumber-field>=0.7.2,<2.0.0',
