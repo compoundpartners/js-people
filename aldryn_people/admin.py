@@ -5,12 +5,15 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import Count
+from django.forms import widgets
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
 
 from django.utils.translation import ugettext_lazy as _
 
 from parler.admin import TranslatableAdmin
+from parler.forms import TranslatableModelForm
 from aldryn_translation_tools.admin import AllTranslationsMixin
+from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 
 from .models import Person, Group, Location
 
@@ -26,12 +29,25 @@ from .constants import (
     ALDRYN_PEOPLE_HIDE_USER,
     ALDRYN_PEOPLE_SHOW_SECONDARY_IMAGE,
     ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE,
+    ALDRYN_PEOPLE_SUMMARY_RICHTEXT,
 )
+
+class PersonAdminForm(TranslatableModelForm):
+
+    #class Meta:
+        #model = Person
+
+    def __init__(self, *args, **kwargs):
+        super(PersonAdminForm, self).__init__(*args, **kwargs)
+        if not ALDRYN_PEOPLE_SUMMARY_RICHTEXT:
+            self.fields['description'].widget = widgets.Textarea()
+
 
 class PersonAdmin(PlaceholderAdminMixin,
                   AllTranslationsMixin,
                   TranslatableAdmin):
 
+    form = PersonAdminForm
     list_display = [
         '__str__', 'email', 'is_published', 'vcard_enabled', ]
     if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
@@ -61,6 +77,12 @@ class PersonAdmin(PlaceholderAdminMixin,
                     return db_field.formfield(**kwargs)
         return super(PersonAdmin, self).formfield_for_foreignkey(
             db_field, request, **kwargs)
+
+    def formfield_for_manytomany(self, db_field, request=None, **kwargs):
+        if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
+            if db_field.name == 'groups':
+                kwargs['widget'] = SortedFilteredSelectMultiple()
+        return super(PersonAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
     contact_fields = (
         'visual',
@@ -126,13 +148,15 @@ class PersonAdmin(PlaceholderAdminMixin,
     if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
         fieldsets += ((None, {
             'fields': (
-                'groups', 'categories',
+                'groups', 'categories', 'services',
+
             ),
         }),)
     else:
         fieldsets += ((None, {
             'fields': (
                 'categories',
+                'services',
             ),
         }),)
 

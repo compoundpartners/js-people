@@ -46,6 +46,10 @@ class Form(forms.BaseForm):
     secondary_phone = forms.CheckboxField(
         'Show secondary telephone number', required=False, initial=False
     )
+    summary_richtext = forms.CheckboxField(
+        "Use rich text for Summary",
+        required=False,
+        initial=False)
 
     def to_settings(self, data, settings):
         settings['PEOPLE_PLUGIN_STYLES'] = data.get('people_plugin_styles', '')
@@ -64,4 +68,7 @@ class Form(forms.BaseForm):
         settings['ALDRYN_PEOPLE_HIDE_USER'] = int(data['hide_user'])
         settings['ALDRYN_PEOPLE_SHOW_SECONDARY_IMAGE'] = int(data['secondary_image'])
         settings['ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE'] = int(data['secondary_phone'])
+        settings['ALDRYN_PEOPLE_SUMMARY_RICHTEXT'] = int(data['summary_richtext'])
+        settings['INSTALLED_APPS'].append('sortedm2m_filter_horizontal_widget')
+
         return settings

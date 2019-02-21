@@ -21,6 +21,7 @@ from django.utils.translation import ugettext_lazy as _, override, force_text
 from six import text_type
 
 from aldryn_common.admin_fields.sortedm2m import SortedM2MModelField
+from sortedm2m.fields import SortedManyToManyField
 from aldryn_translation_tools.models import (
     TranslatedAutoSlugifyMixin,
     TranslationHelperMixin,
@@ -29,6 +30,7 @@ from aldryn_categories.fields import CategoryManyToManyField
 from cms.models.pluginmodel import CMSPlugin
 from cms.utils.i18n import get_current_language, get_default_language
 from djangocms_text_ckeditor.fields import HTMLField
+from djangocms_icon.fields import Icon
 from filer.fields.image import FilerImageField
 from parler.models import TranslatableModel, TranslatedFields
 
@@ -194,7 +196,7 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         verbose_name=_('location'), null=True, blank=True)
     website = models.URLField(
         verbose_name=_('website'), null=True, blank=True)
-    groups = SortedM2MModelField(
+    groups = SortedManyToManyField(
         'aldryn_people.Group', default=None, blank=True, related_name='people',
         help_text=_('Choose and order the groups for this person, the first '
                     'will be the "primary group".'))
@@ -212,6 +214,8 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         null=True, blank=True, related_name='persons')
     categories = CategoryManyToManyField('aldryn_categories.Category',
          verbose_name=_('categories'), blank=True)
+    services = SortedManyToManyField('js_services.Service',
+         verbose_name=_('services'), blank=True)
 
     objects = PeopleManager()
 
@@ -405,3 +409,31 @@ class PeoplePlugin(BasePeoplePlugin):
 
     class Meta:
         abstract = False
+
+
+@python_2_unicode_compatible
+class RelatedPeoplePlugin(CMSPlugin):
+
+    # NOTE: This one does NOT subclass NewsBlogCMSPlugin. This is because this
+    # plugin can really only be placed on the article detail view in an apphook.
+    cmsplugin_ptr = models.OneToOneField(
+        CMSPlugin, related_name='+', parent_link=True)
+
+    title = models.CharField(max_length=255, blank=True, verbose_name=_('Title'))
+    icon = Icon(blank=False, default='fa-')
+    image = FilerImageField(null=True, blank=True, related_name="main_image")
+    number_of_people = models.PositiveSmallIntegerField(verbose_name=_('Number of people'))
+    layout = models.CharField(max_length=30, verbose_name=_('layout'))
+    related_people = SortedManyToManyField(Person, verbose_name=_('key people'), blank=True, symmetrical=False)
+    related_groups = SortedM2MModelField(Group, verbose_name=_('related groups'), blank=True, symmetrical=False)
+    related_locations = SortedM2MModelField(Location, verbose_name=_('related locations'), blank=True, symmetrical=False)
+    related_categories = SortedM2MModelField('aldryn_categories.Category', verbose_name=_('related categories'), blank=True, symmetrical=False)
+
+    def copy_relations(self, oldinstance):
+        self.related_people = oldinstance.related_people.all()
+        self.related_groups = oldinstance.related_groups.all()
+        self.related_locations = oldinstance.related_locations.all()
+        self.related_categories = oldinstance.related_categories.all()
+
+    def __str__(self):
+        return text_type(self.pk)
