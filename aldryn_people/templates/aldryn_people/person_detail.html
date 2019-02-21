@@ -5,4 +5,6 @@
 
 {% block content %}
     {% include "aldryn_people/includes/person.html" with person=person detail_view="true" %}
+
+    {% render_placeholder person.placeholder_sidebar %}
 {% endblock content %}

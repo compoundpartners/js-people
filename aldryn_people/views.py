@@ -83,6 +83,7 @@ class DownloadVcardView(PublishedMixin, AllowPKsTooMixin, TranslatableSlugMixin,
 class PersonDetailView(PublishedMixin, LanguageChangerMixin, AllowPKsTooMixin,
                        TranslatableSlugMixin, DetailView):
     model = Person
+    # context_object_name = 'person'  # The default
 
 
 class GroupDetailView(LanguageChangerMixin, AllowPKsTooMixin,
