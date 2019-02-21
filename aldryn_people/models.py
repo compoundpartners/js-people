@@ -27,6 +27,7 @@ from aldryn_translation_tools.models import (
     TranslationHelperMixin,
 )
 from aldryn_categories.fields import CategoryManyToManyField
+from cms.models.fields import PlaceholderField
 from cms.models.pluginmodel import CMSPlugin
 from cms.utils.i18n import get_current_language, get_default_language
 from djangocms_text_ckeditor.fields import HTMLField
@@ -217,6 +218,7 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
          verbose_name=_('categories'), blank=True)
     services = SortedManyToManyField('js_services.Service',
          verbose_name=_('services'), blank=True)
+    placeholder_sidebar = PlaceholderField('sidebar')
 
     objects = PeopleManager()
 
