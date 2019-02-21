@@ -1,5 +1,6 @@
-{% load crispy_forms_field %}
+{% load crispy_forms_field querystring_tags %}
     <form action="{% url 'js_people:search' %}">
+        <input name="letter" type="hidden" value="{{ filter.form.letter.value }}"/>
         <div class="row">
             <div class="col">
                 <h5>Search the directory</h5>
@@ -13,10 +14,10 @@
             <div class="col">
                 <h5>Filter</h5>
                 <div class="form-group">
-                    {% crispy_field filter.form.categories 'class' 'form-control' %}
+                    {% crispy_field filter.form.category 'class' 'form-control' %}
                 </div>
                 <div class="form-group">
-                    {% crispy_field filter.form.services 'class' 'form-control' %}
+                    {% crispy_field filter.form.service 'class' 'form-control' %}
                 </div>
                 <div class="form-group">
                     {% crispy_field filter.form.location 'class' 'form-control' %}
@@ -26,9 +27,55 @@
                 <h5>Filter by surname</h5>
                 <div class="row">
                   {% for letter in "abcdefghijklmnopqrstuvwxyz" %}
-                  <div class="col"><a href="{% url 'js_people:search' %}?letter={{ letter }}" class="btn{% if letter == filter.form.letter.value %} btn-info{% else %} btn-light{% endif %}">{{ letter|upper }}</a></div>
+                  <div class="col"><a href="{% url 'js_people:search' %}?{% querystring_add 'letter' letter %}" class="btn{% if letter == filter.form.letter.value %} btn-info{% else %} btn-light{% endif %}">{{ letter|upper }}</a></div>
                   {% endfor %}
                 </div>
             </div>
         </div>
+        {% if filter.form.letter.value or filter.form.q.value or filter.form.category.value or filter.form.service.value or filter.form.location.value %}
+        <div class="row">
+            <div class="col">Search results for</div>
+            {% if filter.form.letter.value %}
+                <div class="col">
+                    surname beginning with "{{ filter.form.letter.value|upper }}"
+                    <a href="{% url 'js_people:search' %}?{% querystring_remove 'letter' %}" class="close" aria-label="Remove">
+                      <span aria-hidden="true">&times;</span>
+                    </a>
+                </div>
+            {% endif %}
+            {% if filter.form.q.value %}
+                <div class="col">
+                    name contain "{{ filter.form.q.value }}" frase
+                    <a href="{% url 'js_people:search' %}?{% querystring_remove 'q' %}" class="close" aria-label="Remove">
+                      <span aria-hidden="true">&times;</span>
+                    </a>
+                </div>
+            {% endif %}
+            {% if filter.form.category.value %}
+                <div class="col">
+                    {{ filter.form.category.label }} is {% display_choice filter.form.category %}
+                    <a href="{% url 'js_people:search' %}?{% querystring_remove 'category' %}" class="close" aria-label="Remove">
+                      <span aria-hidden="true">&times;</span>
+                    </a>
+                </div>
+            {% endif %}
+            {% if filter.form.service.value %}
+                <div class="col">
+                    {{ filter.form.service.label }} is {% display_choice filter.form.service %}
+                    <a href="{% url 'js_people:search' %}?{% querystring_remove 'service' %}" class="close" aria-label="Remove">
+                      <span aria-hidden="true">&times;</span>
+                    </a>
+                </div>
+            {% endif %}
+            {% if filter.form.location.value %}
+                <div class="col">
+                    {{ filter.form.location.label }} is {% display_choice filter.form.location %}
+                    <a href="{% url 'js_people:search' %}?{% querystring_remove 'location' %}" class="close" aria-label="Remove">
+                      <span aria-hidden="true">&times;</span>
+                    </a>
+                </div>
+            {% endif %}
+            <div class="col"><a href="{% url 'js_people:search' %}" class="btn btn-light">Reset search</a></div>
+        </div>
+        {% endif %}
     </form>

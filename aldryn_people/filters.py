@@ -33,16 +33,16 @@ class SearchInNamesFilter(django_filters.Filter):
 
 class PeopleFilters(django_filters.FilterSet):
     q = SearchInNamesFilter(label='Search the directory')
-    categories = django_filters.ModelChoiceFilter(queryset=Category.objects.all())
-    services = django_filters.ModelChoiceFilter(queryset=Service.objects.all())
+    category = django_filters.ModelChoiceFilter('categories', label='category', queryset=Category.objects.all())
+    service = django_filters.ModelChoiceFilter('services', label='service', queryset=Service.objects.all())
     letter = django_filters.CharFilter('translations__last_name', 'istartswith')
 
     class Meta:
         model = models.Person
-        fields = ['q', 'categories', 'services', 'location', 'letter']
+        fields = ['q', 'category', 'service', 'location', 'letter']
 
     def __init__(self, values, *args, **kwargs):
         super(PeopleFilters, self).__init__(values, *args, **kwargs)
-        self.filters['categories'].extra.update({'empty_label': 'by category'})
-        self.filters['services'].extra.update({'empty_label': 'by service'})
+        self.filters['category'].extra.update({'empty_label': 'by category'})
+        self.filters['service'].extra.update({'empty_label': 'by service'})
         self.filters['location'].extra.update({'empty_label': 'by location'})
