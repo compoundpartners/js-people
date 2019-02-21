@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('js_services', '0001_initial'),
-        ('aldryn_people', '0026_person_services'),
+        ('aldryn_people', '0027_person_placeholder_sidebar'),
     ]
 
     operations = [
