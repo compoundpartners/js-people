@@ -2,6 +2,7 @@
 {% load i18n cms_tags %}
 
 {% block content %}
+    {% include "aldryn_people/includes/search_form.html" %}
     {% for group in group_list %}
         <h2>{% render_model group 'name' %}</h2>
         {% for person in group.people.publish|dictsort:"name" %}

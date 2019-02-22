@@ -101,7 +101,7 @@ class GroupDetailView(LanguageChangerMixin, AllowPKsTooMixin,
     model = Group
 
 
-class GroupListView(ListView):
+class GroupListView(FilterMixin, ListView):
     model = Group
 
     def dispatch(self, request, *args, **kwargs):
