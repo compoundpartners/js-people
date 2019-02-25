@@ -19,6 +19,7 @@ from .models import Person, Group, Location
 
 from .constants import (
     ALDRYN_PEOPLE_USER_THRESHOLD,
+    ALDRYN_PEOPLE_HIDE_SUFFIX,
     ALDRYN_PEOPLE_HIDE_FAX,
     ALDRYN_PEOPLE_HIDE_WEBSITE,
     ALDRYN_PEOPLE_HIDE_FACEBOOK,
@@ -134,14 +135,22 @@ class PersonAdmin(PlaceholderAdminMixin,
             'user',
         )
 
+    main_fields = (
+        'first_name',
+        'last_name',
+    )
+    if ALDRYN_PEOPLE_HIDE_SUFFIX == 0:
+        main_fields += (
+            'suffix',
+        )
+    main_fields += (
+        'slug',
+        'function', 'description', 'is_published',
+        )
+
     fieldsets = (
         (None, {
-            'fields': (
-                'first_name',
-                'last_name',
-                'slug',
-                'function', 'description', 'is_published',
-            ),
+            'fields': main_fields,
         }),
         (_('Contact (untranslated)'), {
             'fields': contact_fields,

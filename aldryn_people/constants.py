@@ -14,6 +14,11 @@ ALDRYN_PEOPLE_USER_THRESHOLD = getattr(
     50,
 )
 
+ALDRYN_PEOPLE_HIDE_SUFFIX = getattr(
+    settings,
+    'ALDRYN_PEOPLE_HIDE_SUFFIX',
+    0,
+)
 ALDRYN_PEOPLE_HIDE_FAX = getattr(
     settings,
     'ALDRYN_PEOPLE_HIDE_FAX',
