@@ -172,7 +172,7 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
             _('last name'), max_length=255, blank=False,
             default='', help_text=_("Provide this person's last name.")),
         suffix=models.CharField(
-            _('last name'), max_length=60, blank=True,
+            _('suffix'), max_length=60, blank=True,
             default='', help_text=_("Provide this person's suffix.")),
         slug=models.SlugField(
             _('unique slug'), max_length=255, blank=True,

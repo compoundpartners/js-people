@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='persontranslation',
             name='suffix',
-            field=models.CharField(blank=True, default='', help_text="Provide this person's suffix.", max_length=60, verbose_name='last name'),
+            field=models.CharField(blank=True, default='', help_text="Provide this person's suffix.", max_length=60, verbose_name='suffix'),
         ),
     ]
