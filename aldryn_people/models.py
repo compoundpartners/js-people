@@ -221,7 +221,10 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
          verbose_name=_('categories'), blank=True)
     services = SortedManyToManyField('js_services.Service',
          verbose_name=_('services'), blank=True)
+    content = PlaceholderField('content',
+        related_name='person_content')
     placeholder_sidebar = PlaceholderField('sidebar')
+
 
     objects = PeopleManager()
 

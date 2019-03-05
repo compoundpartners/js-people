@@ -53,7 +53,7 @@
         {% if person.twitter %}
             <strong>{% trans "Twitter:" %}</strong>
             <span class="fa fa-fw fa-twitter" aria-hidden="true"></span>
-            <a href="https://twitter.com/oliverashford{{ person.twitter }}" target="_blank">@{{ person.twitter }}</a><br>
+            <a href="https://twitter.com/{{ person.twitter }}" target="_blank">@{{ person.twitter }}</a><br>
         {% endif %}
 
         {% if person.linkedin %}
@@ -81,4 +81,6 @@
             {% trans "Download vCard" %}
         </a>
     {% endif %}
+    {% render_placeholder person.content language placeholder_language %}
+    {% render_placeholder person.placeholder_sidebar language placeholder_language %}
 </article>
