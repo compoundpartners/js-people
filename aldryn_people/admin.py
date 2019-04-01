@@ -85,6 +85,8 @@ class PersonAdmin(PlaceholderAdminMixin,
                 kwargs['widget'] = SortedFilteredSelectMultiple()
         if db_field.name == 'services':
             kwargs['widget'] = SortedFilteredSelectMultiple()
+        if db_field.name == 'companies':
+            kwargs['widget'] = SortedFilteredSelectMultiple()
         return super(PersonAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
     contact_fields = (
@@ -159,7 +161,7 @@ class PersonAdmin(PlaceholderAdminMixin,
     if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
         fieldsets += ((None, {
             'fields': (
-                'groups', 'categories', 'services',
+                'groups', 'categories', 'services', 'companies',
 
             ),
         }),)
@@ -168,6 +170,7 @@ class PersonAdmin(PlaceholderAdminMixin,
             'fields': (
                 'categories',
                 'services',
+                'companies',
             ),
         }),)
 
