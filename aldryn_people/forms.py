@@ -7,6 +7,7 @@ from aldryn_categories.models import Category
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple, SortedMultipleChoiceField
 from django.utils.safestring import mark_safe
 from js_services.models import Service
+from js_locations.models import Location
 from . import models
 
 from .constants import (
@@ -40,7 +41,7 @@ class RelatedPeoplePluginForm(forms.ModelForm):
         widget=FilteredSelectMultiple('groups', False)
     )
     related_locations = forms.ModelMultipleChoiceField(
-        queryset=models.Location.objects.all(),
+        queryset=Location.objects.all(),
         required=False,
         widget=FilteredSelectMultiple('locations', False)
     )

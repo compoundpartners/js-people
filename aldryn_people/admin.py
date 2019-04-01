@@ -15,7 +15,7 @@ from parler.forms import TranslatableModelForm
 from aldryn_translation_tools.admin import AllTranslationsMixin
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 
-from .models import Person, Group, Location
+from .models import Person, Group
 
 from .constants import (
     ALDRYN_PEOPLE_USER_THRESHOLD,
@@ -223,40 +223,7 @@ class GroupAdmin(PlaceholderAdminMixin,
     num_people.admin_order_field = 'people_count'
 
 
-class LocationAdmin(PlaceholderAdminMixin,
-                 AllTranslationsMixin,
-                 TranslatableAdmin):
-    list_display = ['__str__', 'office', 'city', 'is_published',]
-    search_filter = ['translations__name', 'translations__office']
-    fieldsets = (
-        (None, {
-            'fields': (
-                'name',
-                'slug',
-                'office',
-                'is_published',
-            ),
-        }),
-        (_('Contact (untranslated)'), {
-            'fields': (
-                'phone',
-                'fax',
-                'email',
-                'website',
-                'address',
-                'postal_code',
-                'city',
-                'lat',
-                'lng'
-            )
-        }),
-    )
-
-
 admin.site.register(Person, PersonAdmin)
 
 if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
     admin.site.register(Group, GroupAdmin)
-
-if ALDRYN_PEOPLE_HIDE_LOCATION == 0:
-    admin.site.register(Location, LocationAdmin)

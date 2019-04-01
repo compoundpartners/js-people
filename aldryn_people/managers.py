@@ -20,11 +20,3 @@ class PeopleManager(TranslatableManager):
     def published(self):
         return self.get_queryset().published()
 
-
-class LocationManager(TranslatableManager):
-    def get_queryset(self):
-        return PublishedQuerySet(self.model, using=self.db)
-
-    def published(self):
-        return self.get_queryset().published()
-

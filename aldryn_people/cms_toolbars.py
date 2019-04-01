@@ -10,8 +10,8 @@ from cms.toolbar_pool import toolbar_pool
 from cms.utils.urlutils import admin_reverse
 from parler.models import TranslatableModel
 
-from .models import Group, Person, Location
-from .constants import ALDRYN_PEOPLE_HIDE_GROUPS, ALDRYN_PEOPLE_HIDE_LOCATION
+from .models import Group, Person
+from .constants import ALDRYN_PEOPLE_HIDE_GROUPS
 from . import DEFAULT_APP_NAMESPACE
 
 
@@ -76,20 +76,17 @@ class PeopleToolbar(CMSToolbar):
 
         if user and view_name:
             language = get_language_from_request(self.request, check_path=True)
-            group = person = location = None
+            group = person = None
             if view_name == '%s:group-detail' % DEFAULT_APP_NAMESPACE:
                 if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
                     group = get_obj_from_request(Group, self.request)
-            elif view_name == '%s:location-detail' % DEFAULT_APP_NAMESPACE:
-                if ALDRYN_PEOPLE_HIDE_LOCATION == 0:
-                    location = get_obj_from_request(Location, self.request)
             elif view_name in [
                     '%s:person-detail' % DEFAULT_APP_NAMESPACE,
                     '%s:download_vcard' % DEFAULT_APP_NAMESPACE]:
                 person = get_obj_from_request(Person, self.request)
                 if person and person.groups:
                     group = person.primary_group
-            elif view_name in ['%s:group-list' % DEFAULT_APP_NAMESPACE, '%s:location-list' % DEFAULT_APP_NAMESPACE,]:
+            elif view_name == '%s:group-list' % DEFAULT_APP_NAMESPACE:
                 pass
             else:
                 # We don't appear to be on any aldryn_people views so this
@@ -97,9 +94,6 @@ class PeopleToolbar(CMSToolbar):
                 return
 
             menu = self.toolbar.get_or_create_menu('people-app', "People")
-            change_location_perm = user.has_perm('aldryn_people.change_location')
-            add_location_perm = user.has_perm('aldryn_people.add_location')
-            location_perms = [change_location_perm, add_location_perm]
 
             change_group_perm = user.has_perm('aldryn_people.change_group')
             add_group_perm = user.has_perm('aldryn_people.add_group')
@@ -108,25 +102,6 @@ class PeopleToolbar(CMSToolbar):
             change_person_perm = user.has_perm('aldryn_people.change_person')
             add_person_perm = user.has_perm('aldryn_people.add_person')
             person_perms = [change_person_perm, add_person_perm]
-
-            if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
-                if change_location_perm:
-                    url = admin_reverse('aldryn_people_location_changelist')
-                    menu.add_sideframe_item(_('Location list'), url=url)
-
-                if add_location_perm:
-                    url_args = {}
-                    if language:
-                        url_args.update({"language": language})
-                    url = get_admin_url('aldryn_people_location_add', **url_args)
-                    menu.add_modal_item(_('Add new location'), url=url)
-
-                if change_location_perm and location:
-                    url = get_admin_url('aldryn_people_location_change', [location.pk, ])
-                    menu.add_modal_item(_('Edit location'), url=url, active=True)
-
-                if any(location_perms) and any(group_perms):
-                    menu.add_break()
 
             if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
                 if change_group_perm:
