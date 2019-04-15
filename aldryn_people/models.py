@@ -305,6 +305,32 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
     def name(self):
         return self.__str__()
 
+    def related_articles(self, article_category=None):
+        if article_category:
+            return self.article_set.published().filter(app_config__namespace=article_category)
+        return self.article_set.published().all()
+
+    def related_services(self, service_category=None):
+        if service_category:
+            return self.services.published().filter(sections__namespace=service_category)
+        return self.services.published().all()
+
+    def __getattr__(cls, name):
+        if not hasattr(Person, name):
+            if name.startswith('related_articles_'):
+                category = name.split('related_articles_')[1].replace('_', '-')
+                def wrapper(self):
+                    return self.related_articles(category)
+                setattr(Person, name, wrapper)
+                return getattr(cls, name)
+            elif name.startswith('related_services_'):
+                category = name.split('related_services_')[1].replace('_', '-')
+                def wrapper(self):
+                    return self.services(category)
+                setattr(Person, name, wrapper)
+                return getattr(cls, name)
+        raise AttributeError
+
 
 @python_2_unicode_compatible
 class BasePeoplePlugin(CMSPlugin):
