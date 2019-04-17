@@ -306,9 +306,10 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         return self.__str__()
 
     def related_articles(self, article_category=None):
+        qs = self.article_set.published() | self.author_2.published() | self.author_3.published()
         if article_category:
-            return self.article_set.published().filter(app_config__namespace=article_category)
-        return self.article_set.published().all()
+            return qs.filter(app_config__namespace=article_category).distinct()
+        return qs.distinct()
 
     def related_services(self, service_category=None):
         if service_category:
