@@ -16,6 +16,9 @@ class Form(forms.BaseForm):
         required=False, min_value=0
     )
 
+    hide_suffix = forms.CheckboxField(
+        'Hide Suffix', required=False, initial=False
+    )
     hide_fax = forms.CheckboxField(
         'Hide Fax', required=False, initial=False
     )
@@ -58,6 +61,7 @@ class Form(forms.BaseForm):
                 'user_threshold'))
         except (ValueError, TypeError):
             pass
+        settings['ALDRYN_PEOPLE_HIDE_SUFFIX'] = int(data['hide_suffix'])
         settings['ALDRYN_PEOPLE_HIDE_FAX'] = int(data['hide_fax'])
         settings['ALDRYN_PEOPLE_HIDE_WEBSITE'] = int(data['hide_website'])
         settings['ALDRYN_PEOPLE_HIDE_FACEBOOK'] = int(data['hide_facebook'])
