@@ -316,21 +316,21 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
             return self.services.published().filter(sections__namespace=service_category)
         return self.services.published().all()
 
-    def __getattr__(cls, name):
-        if not hasattr(Person, name):
-            if name.startswith('related_articles_'):
-                category = name.split('related_articles_')[1].replace('_', '-')
-                def wrapper(self):
-                    return self.related_articles(category)
-                setattr(Person, name, wrapper)
-                return getattr(cls, name)
-            elif name.startswith('related_services_'):
-                category = name.split('related_services_')[1].replace('_', '-')
-                def wrapper(self):
-                    return self.services(category)
-                setattr(Person, name, wrapper)
-                return getattr(cls, name)
-        raise AttributeError
+    #def __getattr__(cls, name):
+        #if not hasattr(Person, name):
+            #if name.startswith('related_articles_'):
+                #category = name.split('related_articles_')[1].replace('_', '-')
+                #def wrapper(self):
+                    #return self.related_articles(category)
+                #setattr(Person, name, wrapper)
+                #return getattr(cls, name)
+            #elif name.startswith('related_services_'):
+                #category = name.split('related_services_')[1].replace('_', '-')
+                #def wrapper(self):
+                    #return self.services(category)
+                #setattr(Person, name, wrapper)
+                #return getattr(cls, name)
+        #raise AttributeError
 
 
 @python_2_unicode_compatible
@@ -413,6 +413,7 @@ class RelatedPeoplePlugin(CMSPlugin):
     related_locations = SortedM2MModelField('js_locations.Location', verbose_name=_('related locations'), blank=True, symmetrical=False)
     related_categories = SortedM2MModelField('aldryn_categories.Category', verbose_name=_('related categories'), blank=True, symmetrical=False)
     related_services = SortedM2MModelField('js_services.Service', verbose_name=_('related services'), blank=True, symmetrical=False)
+    related_companies = SortedManyToManyField('js_companies.Company', verbose_name=_('related companies'), blank=True, symmetrical=False)
 
     def copy_relations(self, oldinstance):
         self.related_people = oldinstance.related_people.all()
@@ -420,6 +421,7 @@ class RelatedPeoplePlugin(CMSPlugin):
         self.related_locations = oldinstance.related_locations.all()
         self.related_services = oldinstance.related_services.all()
         self.related_categories = oldinstance.related_categories.all()
+        self.related_companies = oldinstance.related_companies.all()
 
     def __str__(self):
         return text_type(self.pk)

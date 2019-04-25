@@ -112,6 +112,7 @@ class RelatedPeoplePlugin(CMSPluginBase):
         related_locations = instance.related_locations.all()
         related_categories = instance.related_categories.all()
         related_services = instance.related_services.all()
+        related_companies = instance.related_companies.all()
 
         if not qs.exists():
             qs = models.Person.objects.published().distinct()
@@ -123,6 +124,8 @@ class RelatedPeoplePlugin(CMSPluginBase):
                 qs = qs.filter(categories__in=related_categories)
             if related_services.exists():
                 qs = qs.filter(services__in=related_services)
+            if related_companies.exists():
+                qs = qs.filter(companies__in=related_companies)
 
         context['related_people'] = qs[:int(instance.number_of_people)]
 
