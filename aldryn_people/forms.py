@@ -8,6 +8,7 @@ from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultipl
 from django.utils.safestring import mark_safe
 from js_services.models import Service
 from js_locations.models import Location
+from js_companies.models import Company
 from . import models
 
 from .constants import (
@@ -54,6 +55,11 @@ class RelatedPeoplePluginForm(forms.ModelForm):
         queryset=Service.objects.all(),
         required=False,
         widget=FilteredSelectMultiple('services', False)
+    )
+    related_companies = forms.ModelMultipleChoiceField(
+        queryset=Company.objects.all(),
+        required=False,
+        widget=FilteredSelectMultiple('companies', False)
     )
 
 
