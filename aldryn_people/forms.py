@@ -8,12 +8,12 @@ from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultipl
 from django.utils.safestring import mark_safe
 from js_services.models import Service
 from js_locations.models import Location
-from js_companies.models import Company
 from . import models
 
 from .constants import (
     ALDRYN_PEOPLE_HIDE_GROUPS,
     ALDRYN_PEOPLE_HIDE_LOCATION,
+    IS_THERE_COMPANIES,
 )
 
 LAYOUT_CHOICES = [
@@ -56,12 +56,7 @@ class RelatedPeoplePluginForm(forms.ModelForm):
         required=False,
         widget=FilteredSelectMultiple('services', False)
     )
-    related_companies = forms.ModelMultipleChoiceField(
-        queryset=Company.objects.all(),
-        required=False,
-        widget=FilteredSelectMultiple('companies', False)
-    )
-
+    related_companies = forms.CharField()
 
     def __init__(self, *args, **kwargs):
         super(RelatedPeoplePluginForm, self).__init__(*args, **kwargs)
@@ -69,3 +64,10 @@ class RelatedPeoplePluginForm(forms.ModelForm):
             del self.fields['related_groups']
         if 'related_locations' in self.fields and ALDRYN_PEOPLE_HIDE_LOCATION != 0:
             del self.fields['related_locations']
+        if IS_THERE_COMPANIES:
+            self.fields['related_companies'] = forms.ModelMultipleChoiceField(queryset=Company.objects.all(), required=False)
+            self.fields['related_companies'].widget = SortedFilteredSelectMultiple()
+            self.fields['related_companies'].queryset = Company.objects.all()
+            self.fields['related_companies'].initial = self.instance.related_companies.all()
+        else:
+            del self.fields['related_companies']

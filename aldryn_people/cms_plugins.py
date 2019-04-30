@@ -11,7 +11,11 @@ from cms.plugin_pool import plugin_pool
 
 from aldryn_people import models, forms, DEFAULT_APP_NAMESPACE
 from .utils import get_valid_languages
-
+from .constants import (
+    IS_THERE_COMPANIES,
+)
+if IS_THERE_COMPANIES:
+    from js_companies.models import Company
 
 NAMESPACE_ERROR = _(
     "Seems that there is no valid application hook for aldryn-people."
@@ -112,7 +116,8 @@ class RelatedPeoplePlugin(CMSPluginBase):
         related_locations = instance.related_locations.all()
         related_categories = instance.related_categories.all()
         related_services = instance.related_services.all()
-        related_companies = instance.related_companies.all()
+        if IS_THERE_COMPANIES:
+            related_companies = instance.related_companies.all()
 
         if not qs.exists():
             qs = models.Person.objects.published().distinct()
@@ -124,7 +129,7 @@ class RelatedPeoplePlugin(CMSPluginBase):
                 qs = qs.filter(categories__in=related_categories)
             if related_services.exists():
                 qs = qs.filter(services__in=related_services)
-            if related_companies.exists():
+            if IS_THERE_COMPANIES and related_companies.exists():
                 qs = qs.filter(companies__in=related_companies)
 
         context['related_people'] = qs[:int(instance.number_of_people)]
@@ -133,3 +138,8 @@ class RelatedPeoplePlugin(CMSPluginBase):
 
     def get_render_template(self, context, instance, placeholder):
         return self.TEMPLATE_NAME % instance.layout
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if IS_THERE_COMPANIES:
+            obj.related_companies = Company.objects.filter(pk__in=form.cleaned_data.get('related_companies'))

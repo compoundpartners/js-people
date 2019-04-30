@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import Count
+from django import forms
 from django.forms import widgets
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
 
@@ -31,9 +32,13 @@ from .constants import (
     ALDRYN_PEOPLE_SHOW_SECONDARY_IMAGE,
     ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE,
     ALDRYN_PEOPLE_SUMMARY_RICHTEXT,
+    IS_THERE_COMPANIES,
 )
+if IS_THERE_COMPANIES:
+    from js_companies.models import Company
 
 class PersonAdminForm(TranslatableModelForm):
+    companies = forms.CharField()
 
     #class Meta:
         #model = Person
@@ -42,6 +47,13 @@ class PersonAdminForm(TranslatableModelForm):
         super(PersonAdminForm, self).__init__(*args, **kwargs)
         if not ALDRYN_PEOPLE_SUMMARY_RICHTEXT:
             self.fields['description'].widget = widgets.Textarea()
+        if IS_THERE_COMPANIES:
+            self.fields['companies'] = forms.ModelMultipleChoiceField(queryset=Company.objects.all(), required=False)# self.instance.companies
+            self.fields['companies'].widget = SortedFilteredSelectMultiple()
+            self.fields['companies'].queryset = Company.objects.all()
+            self.fields['companies'].initial = self.instance.companies.all()
+        else:
+            del self.fields['companies']
 
 
 class PersonAdmin(PlaceholderAdminMixin,
@@ -80,12 +92,7 @@ class PersonAdmin(PlaceholderAdminMixin,
             db_field, request, **kwargs)
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
-            if db_field.name == 'groups':
-                kwargs['widget'] = SortedFilteredSelectMultiple()
-        if db_field.name == 'services':
-            kwargs['widget'] = SortedFilteredSelectMultiple()
-        if db_field.name == 'companies':
+        if db_field.name in ['groups', 'services','companies']:
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super(PersonAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
@@ -149,6 +156,19 @@ class PersonAdmin(PlaceholderAdminMixin,
         'slug',
         'function', 'description', 'is_published',
         )
+    advanced_fields = ()
+    if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
+        advanced_fields += (
+            'groups',
+        )
+    advanced_fields += (
+        'categories',
+        'services',
+    )
+    if IS_THERE_COMPANIES:
+        advanced_fields += (
+            'companies',
+        )
 
     fieldsets = (
         (None, {
@@ -157,22 +177,11 @@ class PersonAdmin(PlaceholderAdminMixin,
         (_('Contact (untranslated)'), {
             'fields': contact_fields,
         }),
+        (None, {
+            'fields': advanced_fields,
+        }),
     )
-    if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
-        fieldsets += ((None, {
-            'fields': (
-                'groups', 'categories', 'services', 'companies',
 
-            ),
-        }),)
-    else:
-        fieldsets += ((None, {
-            'fields': (
-                'categories',
-                'services',
-                'companies',
-            ),
-        }),)
 
     def get_queryset(self, request):
         qs = super(PersonAdmin, self).get_queryset(request)
@@ -183,6 +192,12 @@ class PersonAdmin(PlaceholderAdminMixin,
         return obj.group_count
     num_groups.short_description = _('# Groups')
     num_groups.admin_order_field = 'group_count'
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if IS_THERE_COMPANIES:
+            obj.companies = Company.objects.filter(pk__in=form.cleaned_data.get('companies'))
+
 
 
 class GroupAdmin(PlaceholderAdminMixin,

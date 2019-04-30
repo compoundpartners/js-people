@@ -39,6 +39,9 @@ from .managers import PeopleManager
 from .utils import get_additional_styles
 from . import DEFAULT_APP_NAMESPACE
 
+from .constants import (
+    IS_THERE_COMPANIES,
+)
 
 @python_2_unicode_compatible
 class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
@@ -167,8 +170,6 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
          verbose_name=_('categories'), blank=True)
     services = SortedManyToManyField('js_services.Service',
          verbose_name=_('services'), blank=True)
-    companies = SortedManyToManyField('js_companies.Company',
-         verbose_name=_('companies'), blank=True)
     content = PlaceholderField('content',
         related_name='person_content')
     placeholder_sidebar = PlaceholderField('sidebar')
@@ -413,7 +414,6 @@ class RelatedPeoplePlugin(CMSPlugin):
     related_locations = SortedM2MModelField('js_locations.Location', verbose_name=_('related locations'), blank=True, symmetrical=False)
     related_categories = SortedM2MModelField('aldryn_categories.Category', verbose_name=_('related categories'), blank=True, symmetrical=False)
     related_services = SortedM2MModelField('js_services.Service', verbose_name=_('related services'), blank=True, symmetrical=False)
-    related_companies = SortedManyToManyField('js_companies.Company', verbose_name=_('related companies'), blank=True, symmetrical=False)
 
     def copy_relations(self, oldinstance):
         self.related_people = oldinstance.related_people.all()
@@ -421,7 +421,8 @@ class RelatedPeoplePlugin(CMSPlugin):
         self.related_locations = oldinstance.related_locations.all()
         self.related_services = oldinstance.related_services.all()
         self.related_categories = oldinstance.related_categories.all()
-        self.related_companies = oldinstance.related_companies.all()
+        if IS_THERE_COMPANIES:
+            self.related_companies = oldinstance.related_companies.all()
 
     def __str__(self):
         return text_type(self.pk)

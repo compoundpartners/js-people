@@ -74,3 +74,8 @@ ALDRYN_PEOPLE_SUMMARY_RICHTEXT = getattr(
     'ALDRYN_PEOPLE_SUMMARY_RICHTEXT',
     0,
 )
+try:
+    IS_THERE_COMPANIES = True
+    from js_companies.models import Company
+except ImportError:
+    IS_THERE_COMPANIES = False
