@@ -12,12 +12,12 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='person',
-            name='companies',
-        ),
-        migrations.RemoveField(
-            model_name='relatedpeopleplugin',
-            name='related_companies',
-        ),
+        #migrations.RemoveField(
+            #model_name='person',
+            #name='companies',
+        #),
+        #migrations.RemoveField(
+            #model_name='relatedpeopleplugin',
+            #name='related_companies',
+        #),
     ]
