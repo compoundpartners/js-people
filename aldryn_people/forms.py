@@ -15,6 +15,8 @@ from .constants import (
     ALDRYN_PEOPLE_HIDE_LOCATION,
     IS_THERE_COMPANIES,
 )
+if IS_THERE_COMPANIES:
+    from js_companies.models import Company
 
 LAYOUT_CHOICES = [
     ('cols', 'Columns'),
