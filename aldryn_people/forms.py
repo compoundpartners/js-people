@@ -58,7 +58,7 @@ class RelatedPeoplePluginForm(forms.ModelForm):
         required=False,
         widget=FilteredSelectMultiple('services', False)
     )
-    related_companies = forms.CharField()
+    related_companies = forms.CharField(required=False, widget=forms.HiddenInput)
 
     def __init__(self, *args, **kwargs):
         super(RelatedPeoplePluginForm, self).__init__(*args, **kwargs)
@@ -72,5 +72,3 @@ class RelatedPeoplePluginForm(forms.ModelForm):
             self.fields['related_companies'].queryset = Company.objects.all()
             if self.instance.pk and self.instance.related_companies.count():
                 self.fields['related_companies'].initial = self.instance.related_companies.all()
-        else:
-            del self.fields['related_companies']
