@@ -114,10 +114,10 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
              TranslatableModel):
 
     translations = TranslatedFields(
-        first_name=models.CharField(
+        first_name_trans=models.CharField(
             _('first name'), max_length=255, blank=False,
             default='', help_text=_("Provide this person's first name.")),
-        last_name=models.CharField(
+        last_name_trans=models.CharField(
             _('last name'), max_length=255, blank=False,
             default='', help_text=_("Provide this person's last name.")),
         suffix=models.CharField(
@@ -130,6 +130,12 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         function=models.CharField(_('role'), max_length=255, blank=True, default=''),
         description=HTMLField(_('description'), blank=True, default='')
     )
+    first_name = models.CharField(
+        _('first name'), max_length=255, blank=False,
+        default='', help_text=_("Provide this person's first name."))
+    last_name = models.CharField(
+        _('last name'), max_length=255, blank=False,
+        default='', help_text=_("Provide this person's last name."))
     phone = models.CharField(
         verbose_name=_('phone'), null=True, blank=True, max_length=100)
     second_phone = models.CharField(
@@ -186,18 +192,20 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
 
         if six.PY2:
             pkstr = six.u(pkstr)
-        name = ' '.join((
-            self.safe_translation_getter(
-                'first_name',
-                default='',
-                any_language=True
-            ),
-            self.safe_translation_getter(
-                'last_name',
-                default='',
-                any_language=True
-            )
-        )).strip()
+        # name = ' '.join((
+        #     self.safe_translation_getter(
+        #         'first_name',
+        #         default='',
+        #         any_language=True
+        #     ),
+        #     self.safe_translation_getter(
+        #         'last_name',
+        #         default='',
+        #         any_language=True
+        #     )
+        # )).strip()
+        # name = 'TESTING'  #DEBUG
+        name = ' '.join((self.first_name, self.last_name)).strip()
         return name if len(name) > 0 else pkstr
 
     @property
