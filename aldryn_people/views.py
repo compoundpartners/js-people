@@ -129,7 +129,7 @@ class GroupListView(FilterFormMixin, ListView):
 class SearchView(FilterMixin, PublishedMixin, ListView):
     model = Person
     template_name = 'aldryn_people/search.html'
-    paginate_by = 1
+    paginate_by = 20
 
     def dispatch(self, request, *args, **kwargs):
         self.request_language = get_language(request)
