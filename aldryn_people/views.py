@@ -28,7 +28,7 @@ def get_language(request):
 class FilterFormMixin(object):
 
     def get_context_data(self, **kwargs):
-        data = super(FilterMixin, self).get_context_data(**kwargs)
+        data = super(FilterFormMixin, self).get_context_data(**kwargs)
         data['filter'] = PeopleFilters(
             self.request.GET, queryset=data['object_list'])
         return data
