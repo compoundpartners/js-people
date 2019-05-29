@@ -79,6 +79,11 @@ ADD_FILTERED_CATEGORIES = getattr(
     'ALDRYN_PEOPLE_ADD_FILTERED_CATEGORIES',
     [],
 )
+SHOW_GROUP_LIST_VIEW = getattr(
+    settings,
+    'ALDRYN_PEOPLE_SHOW_GROUP_LIST_VIEW',
+    True,
+)
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company

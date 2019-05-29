@@ -11,6 +11,7 @@ from aldryn_people.views import (
     PersonDetailView,
     SearchView,
 )
+from .constants import SHOW_GROUP_LIST_VIEW
 
 urlpatterns = [
     url(r'^search/$',
@@ -31,6 +32,13 @@ urlpatterns = [
     url(r'^(?P<slug>[A-Za-z0-9_\-]+)/download/$',
         DownloadVcardView.as_view(), name='download_vcard'),
 
-    url(r'^$',
-        GroupListView.as_view(), name='group-list'),
 ]
+if SHOW_GROUP_LIST_VIEW:
+    urlpatterns.append(url(r'^$',
+        GroupListView.as_view(), name='group-list')
+    )
+else:
+    urlpatterns.append(url(r'^$',
+        SearchView.as_view(), name='list')
+    )
+
