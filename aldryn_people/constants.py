@@ -74,6 +74,11 @@ ALDRYN_PEOPLE_SUMMARY_RICHTEXT = getattr(
     'ALDRYN_PEOPLE_SUMMARY_RICHTEXT',
     0,
 )
+ADD_FILTERED_CATEGORIES = getattr(
+    settings,
+    'ALDRYN_PEOPLE_ADD_FILTERED_CATEGORIES',
+    [],
+)
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company
