@@ -11,6 +11,7 @@ from django.utils.translation import get_language_from_request
 
 from menus.utils import set_language_changer
 from parler.views import TranslatableSlugMixin
+from django_filters.views import FilterMixin
 
 from . import DEFAULT_APP_NAMESPACE
 from .models import Group, Person
@@ -24,7 +25,7 @@ def get_language(request):
     return lang
 
 
-class FilterMixin(object):
+class FilterFormMixin(object):
 
     def get_context_data(self, **kwargs):
         data = super(FilterMixin, self).get_context_data(**kwargs)
@@ -101,7 +102,7 @@ class GroupDetailView(LanguageChangerMixin, AllowPKsTooMixin,
     model = Group
 
 
-class GroupListView(FilterMixin, ListView):
+class GroupListView(FilterFormMixin, ListView):
     model = Group
 
     def dispatch(self, request, *args, **kwargs):
@@ -128,8 +129,7 @@ class GroupListView(FilterMixin, ListView):
 class SearchView(FilterMixin, PublishedMixin, ListView):
     model = Person
     template_name = 'aldryn_people/search.html'
-    paginate_by = 20
-
+    paginate_by = 1
 
     def dispatch(self, request, *args, **kwargs):
         self.request_language = get_language(request)
@@ -144,6 +144,14 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
         # prepare language properties for filtering
         return qs.translated(*self.valid_languages)
 
-    def get_context_data(self, **kwargs):
-        context = super(SearchView, self).get_context_data(**kwargs)
-        return context
+    def get(self, request, *args, **kwargs):
+        self.filterset = PeopleFilters(self.request.GET, queryset=self.get_queryset())
+
+        if not self.filterset.is_bound or self.filterset.is_valid() or not self.get_strict():
+            self.object_list = self.filterset.qs
+        else:
+            self.object_list = self.filterset.queryset.none()
+
+        context = self.get_context_data(filter=self.filterset,
+                                        object_list=self.object_list)
+        return self.render_to_response(context)

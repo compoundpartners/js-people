@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 
-__version__ = '2.5.7'
+__version__ = '2.5.8'
 
 DEFAULT_APP_NAMESPACE = 'js_people'
