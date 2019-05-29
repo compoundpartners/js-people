@@ -9,4 +9,8 @@
     {% for person in filter.qs %}
         {% include "aldryn_people/includes/person.html" with person=person %}
     {% endfor %}
+  <nav>
+    {% include "aldryn_people/includes/pagination.html" %}
+  </nav>
+
 {% endblock content %}

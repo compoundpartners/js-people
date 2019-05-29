@@ -128,6 +128,7 @@ class GroupListView(FilterMixin, ListView):
 class SearchView(FilterMixin, PublishedMixin, ListView):
     model = Person
     template_name = 'aldryn_people/search.html'
+    paginate_by = 20
 
 
     def dispatch(self, request, *args, **kwargs):
