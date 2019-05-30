@@ -84,6 +84,11 @@ SHOW_GROUP_LIST_VIEW = getattr(
     'ALDRYN_PEOPLE_SHOW_GROUP_LIST_VIEW',
     True,
 )
+URL_PREFIX = getattr(
+    settings,
+    'ALDRYN_PEOPLE_URL_PREFIX',
+    '',
+)
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company

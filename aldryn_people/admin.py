@@ -38,7 +38,7 @@ if IS_THERE_COMPANIES:
     from js_companies.models import Company
 
 class PersonAdminForm(TranslatableModelForm):
-    companies = forms.CharField()
+    companies = forms.CharField(required=False, widget=forms.HiddenInput)
 
     #class Meta:
         #model = Person
@@ -53,8 +53,6 @@ class PersonAdminForm(TranslatableModelForm):
             self.fields['companies'].queryset = Company.objects.all()
             if self.instance.pk and self.instance.companies.count():
                 self.fields['companies'].initial = self.instance.companies.all()
-        else:
-            del self.fields['companies']
 
 
 class PersonAdmin(PlaceholderAdminMixin,
@@ -213,6 +211,7 @@ class GroupAdmin(PlaceholderAdminMixin,
                 'name',
                 'slug',
                 'description',
+                'sorting',
             ),
         }),
         (_('Contact (untranslated)'), {

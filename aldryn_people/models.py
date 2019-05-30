@@ -70,6 +70,10 @@ class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         verbose_name=_('email'), blank=True, default='')
     website = models.URLField(
         verbose_name=_('website'), null=True, blank=True)
+    sorting = models.PositiveSmallIntegerField(
+        verbose_name=_('sorting field'), default=1,
+        help_text=_('first with low value'))
+
 
     @property
     def company_name(self):

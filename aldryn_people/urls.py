@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 
 from aldryn_people.views import (
     DownloadVcardView,
@@ -10,8 +10,9 @@ from aldryn_people.views import (
     GroupListView,
     PersonDetailView,
     SearchView,
+    IndexView,
 )
-from .constants import SHOW_GROUP_LIST_VIEW
+from .constants import URL_PREFIX, SHOW_GROUP_LIST_VIEW
 
 urlpatterns = [
     url(r'^search/$',
@@ -42,3 +43,10 @@ else:
         SearchView.as_view(), name='list')
     )
 
+if URL_PREFIX:
+    URL_PREFIX += '/'
+    extra_patterns = urlpatterns
+    urlpatterns = [
+        url(r'^$', IndexView.as_view(), name='index'),
+        url(URL_PREFIX, include(extra_patterns))
+    ]

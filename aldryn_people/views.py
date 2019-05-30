@@ -6,7 +6,7 @@ from aldryn_people.utils import get_valid_languages
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404, HttpResponse
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, TemplateView
 from django.utils.translation import get_language_from_request
 
 from menus.utils import set_language_changer
@@ -29,8 +29,9 @@ class FilterFormMixin(object):
 
     def get_context_data(self, **kwargs):
         data = super(FilterFormMixin, self).get_context_data(**kwargs)
+        qs = data['object_list'] if 'object_list' in data else Person.objects.none()
         data['filter'] = PeopleFilters(
-            self.request.GET, queryset=data['object_list'])
+            self.request.GET, queryset=qs)
         return data
 
 
@@ -114,7 +115,7 @@ class GroupListView(FilterFormMixin, ListView):
         return super(GroupListView, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        qs = super(GroupListView, self).get_queryset()
+        qs = super(GroupListView, self).get_queryset().order_by('sorting')
         # prepare language properties for filtering
         return qs.translated(*self.valid_languages)
 
@@ -155,3 +156,7 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
         context = self.get_context_data(filter=self.filterset,
                                         object_list=self.object_list)
         return self.render_to_response(context)
+
+
+class IndexView(FilterFormMixin, TemplateView):
+    template_name = 'aldryn_people/index.html'
