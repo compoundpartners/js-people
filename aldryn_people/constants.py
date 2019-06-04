@@ -89,6 +89,11 @@ URL_PREFIX = getattr(
     'ALDRYN_PEOPLE_URL_PREFIX',
     '',
 )
+INDEX_GROUP_LIST = getattr(
+    settings,
+    'ALDRYN_PEOPLE_INDEX_GROUP_LIST',
+    [],
+)
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company

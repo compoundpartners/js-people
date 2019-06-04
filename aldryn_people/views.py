@@ -16,6 +16,7 @@ from django_filters.views import FilterMixin
 from . import DEFAULT_APP_NAMESPACE
 from .models import Group, Person
 from .filters import PeopleFilters
+from .constants import INDEX_GROUP_LIST
 
 
 def get_language(request):
@@ -116,14 +117,17 @@ class GroupListView(FilterFormMixin, ListView):
 
     def get_queryset(self):
         qs = super(GroupListView, self).get_queryset().order_by('sorting')
+        if INDEX_GROUP_LIST:
+            qs = qs.filter(translations__slug__in=INDEX_GROUP_LIST)
         # prepare language properties for filtering
         return qs.translated(*self.valid_languages)
 
     def get_context_data(self, **kwargs):
         context = super(GroupListView, self).get_context_data(**kwargs)
-        qs_ungrouped = Person.objects.published().filter(groups__isnull=True)
-        context['ungrouped_people'] = qs_ungrouped.translated(
-            *self.valid_languages)
+        if not INDEX_GROUP_LIST:
+            qs_ungrouped = Person.objects.published().filter(groups__isnull=True)
+            context['ungrouped_people'] = qs_ungrouped.translated(
+                *self.valid_languages)
         return context
 
 
