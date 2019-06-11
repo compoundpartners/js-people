@@ -94,6 +94,11 @@ INDEX_GROUP_LIST = getattr(
     'ALDRYN_PEOPLE_INDEX_GROUP_LIST',
     [],
 )
+INDEX_DEFAULT_FILTERS = getattr(
+    settings,
+    'ALDRYN_PEOPLE_INDEX_DEFAULT_FILTERS',
+    {},
+)
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company
