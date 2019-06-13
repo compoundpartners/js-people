@@ -165,6 +165,22 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
                                         object_list=self.object_list)
         return self.render_to_response(context)
 
+    def get_pagination_options(self):
+        options = {
+            'pages_start': 10,
+            'pages_visible': 2,
+        }
+        pages_visible_negative = -options['pages_visible']
+        options['pages_visible_negative'] = pages_visible_negative
+        options['pages_visible_total'] = options['pages_visible'] + 1
+        options['pages_visible_total_negative'] = pages_visible_negative - 1
+        return options
+
+    def get_context_data(self, **kwargs):
+        context = super(SearchView, self).get_context_data(**kwargs)
+        context['pagination'] = self.get_pagination_options()
+        return context
+
 
 class IndexView(FilterFormMixin, TemplateView):
     template_name = 'aldryn_people/index.html'
