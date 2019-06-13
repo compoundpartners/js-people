@@ -16,7 +16,7 @@ from django_filters.views import FilterMixin
 from . import DEFAULT_APP_NAMESPACE
 from .models import Group, Person
 from .filters import PeopleFilters
-from .constants import INDEX_GROUP_LIST, INDEX_DEFAULT_FILTERS
+from .constants import INDEX_GROUP_LIST, INDEX_DEFAULT_FILTERS, DEFAULT_SORTING
 
 
 def get_language(request):
@@ -149,6 +149,8 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
         # prepare language properties for filtering
         if not self.request.GET and INDEX_DEFAULT_FILTERS:
             qs = qs.filter(**INDEX_DEFAULT_FILTERS)
+        if DEFAULT_SORTING:
+            qs = qs.order_by(*DEFAULT_SORTING)
         return qs.translated(*self.valid_languages)
 
     def get(self, request, *args, **kwargs):

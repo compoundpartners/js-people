@@ -99,6 +99,11 @@ INDEX_DEFAULT_FILTERS = getattr(
     'ALDRYN_PEOPLE_INDEX_DEFAULT_FILTERS',
     {},
 )
+DEFAULT_SORTING = getattr(
+    settings,
+    'ALDRYN_PEOPLE_DEFAULT_SORTING',
+    ('last_name',),
+)
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company
