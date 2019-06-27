@@ -16,6 +16,8 @@ from django.conf import settings
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 from django.utils.translation import ugettext_lazy as _, override, force_text
 from six import text_type
@@ -26,6 +28,7 @@ from aldryn_translation_tools.models import (
     TranslatedAutoSlugifyMixin,
     TranslationHelperMixin,
 )
+from aldryn_newsblog.utils import get_plugin_index_data, get_request, strip_tags
 from aldryn_categories.fields import CategoryManyToManyField
 from cms.models.fields import PlaceholderField
 from cms.models.pluginmodel import CMSPlugin
@@ -40,6 +43,7 @@ from .utils import get_additional_styles
 from . import DEFAULT_APP_NAMESPACE
 
 from .constants import (
+    UPDATE_SEARCH_DATA_ON_SAVE,
     IS_THERE_COMPANIES,
 )
 
@@ -116,6 +120,7 @@ class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
 @python_2_unicode_compatible
 class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
              TranslatableModel):
+    update_search_on_save = UPDATE_SEARCH_DATA_ON_SAVE
 
     translations = TranslatedFields(
         first_name_trans=models.CharField(
@@ -132,7 +137,8 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
             default='',
             help_text=_("Leave blank to auto-generate a unique slug.")),
         function=models.CharField(_('role'), max_length=255, blank=True, default=''),
-        description=HTMLField(_('description'), blank=True, default='')
+        description=HTMLField(_('description'), blank=True, default=''),
+        search_data=models.TextField(blank=True, editable=False)
     )
     first_name = models.CharField(
         _('first name'), max_length=255, blank=False,
@@ -220,6 +226,41 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
     @property
     def comment(self):
         return self.safe_translation_getter('description', '')
+
+    def get_search_data(self, language=None, request=None):
+        """
+        Provides an index for use with Haystack, or, for populating
+        Event.translations.search_data.
+        """
+        if not self.pk:
+            return ''
+        if language is None:
+            language = get_current_language()
+        if request is None:
+            request = get_request(language=language)
+        text_bits = [self.first_name]
+        text_bits.append(self.last_name)
+        text_bits.append(self.safe_translation_getter('function', ''))
+        description = self.safe_translation_getter('description', '')
+        text_bits.append(strip_tags(description))
+        for category in self.categories.all():
+            text_bits.append(
+                force_unicode(category.safe_translation_getter('name')))
+        for service in self.services.all():
+            text_bits.append(
+                force_unicode(service.safe_translation_getter('title')))
+        if self.content:
+            plugins = self.content.cmsplugin_set.filter(language=language)
+            for base_plugin in plugins:
+                plugin_text_content = ' '.join(
+                    get_plugin_index_data(base_plugin, request))
+                text_bits.append(plugin_text_content)
+        return ' '.join(text_bits)
+
+    def save(self, *args, **kwargs):
+        if self.update_search_on_save:
+            self.search_data = self.get_search_data()
+        super(Person, self).save(*args, **kwargs)
 
     def get_absolute_url(self, language=None):
         if not language:
@@ -438,3 +479,23 @@ class RelatedPeoplePlugin(CMSPlugin):
 
     def __str__(self):
         return text_type(self.pk)
+
+
+@receiver(post_save, dispatch_uid='service_update_search_data')
+def update_search_data(sender, instance, **kwargs):
+    """
+    Upon detecting changes in a plugin used in an service's content
+    (PlaceholderField), update the service's search_index so that we can
+    perform simple searches even without Haystack, etc.
+    """
+    is_cms_plugin = issubclass(instance.__class__, CMSPlugin)
+
+    if Person.update_search_on_save and is_cms_plugin:
+        placeholder = (getattr(instance, '_placeholder_cache', None) or
+                       instance.placeholder)
+        if hasattr(placeholder, '_attached_model_cache'):
+            if placeholder._attached_model_cache == Service:
+                person = placeholder._attached_model_cache.objects.language(
+                    instance.language).get(content=placeholder.pk)
+                person.search_data = service.get_search_data(instance.language)
+                person.save()

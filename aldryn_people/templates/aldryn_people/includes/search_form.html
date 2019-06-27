@@ -5,7 +5,7 @@
             <div class="col">
                 <h5>Search the directory</h5>
                 <div class="input-group mb-3">
-                  {% crispy_field filter.form.q 'class' 'form-control' %}
+                  {% crispy_field filter.form.name 'class' 'form-control' %}
                   <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="submit">GO</button>
                   </div>
@@ -32,7 +32,7 @@
                 </div>
             </div>
         </div>
-        {% if filter.form.letter.value or filter.form.q.value or filter.form.category.value or filter.form.service.value or filter.form.location.value %}
+        {% if filter.form.letter.value or filter.form.name.value or filter.form.category.value or filter.form.service.value or filter.form.location.value %}
         <div class="row">
             <div class="col">Search results for</div>
             {% if filter.form.letter.value %}
@@ -43,9 +43,9 @@
                     </a>
                 </div>
             {% endif %}
-            {% if filter.form.q.value %}
+            {% if filter.form.name.value %}
                 <div class="col">
-                    name contain "{{ filter.form.q.value }}" frase
+                    name contain "{{ filter.form.name.value }}" frase
                     <a href="{% url 'js_people:search' %}?{% querystring_remove 'q' %}" class="close" aria-label="Remove">
                       <span aria-hidden="true">&times;</span>
                     </a>

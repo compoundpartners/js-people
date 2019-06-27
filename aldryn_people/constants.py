@@ -2,6 +2,12 @@
 
 from django.conf import settings
 
+UPDATE_SEARCH_DATA_ON_SAVE = getattr(
+    settings,
+    'PEOPLE_UPDATE_SEARCH_DATA_ON_SAVE',
+    False,
+)
+
 PEOPLE_PLUGIN_STYLES = getattr(
     settings,
     'PEOPLE_PLUGIN_STYLES',
