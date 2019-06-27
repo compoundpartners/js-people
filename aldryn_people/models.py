@@ -12,6 +12,11 @@ except ImportError:
     from urllib import parse as urlparse
 import warnings
 
+try:
+    from django.utils.encoding import force_unicode
+except ImportError:
+    from django.utils.encoding import force_text as force_unicode
+
 from django.conf import settings
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.db import models
