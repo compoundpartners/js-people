@@ -480,6 +480,9 @@ class RelatedPeoplePlugin(CMSPlugin):
     related_locations = SortedM2MModelField('js_locations.Location', verbose_name=_('related locations'), blank=True, symmetrical=False)
     related_categories = SortedM2MModelField('aldryn_categories.Category', verbose_name=_('related categories'), blank=True, symmetrical=False)
     related_services = SortedM2MModelField('js_services.Service', verbose_name=_('related services'), blank=True, symmetrical=False)
+    more_button_is_shown = models.BooleanField(blank=True, default=False, verbose_name=_('Show “See More Button”'))
+    more_button_text = models.CharField(max_length=255, blank=True, verbose_name=_('See More Button Text'))
+    more_button_link = models.CharField(max_length=255, blank=True, verbose_name=_('See More Button Link'))
 
     def copy_relations(self, oldinstance):
         self.related_people = oldinstance.related_people.all()

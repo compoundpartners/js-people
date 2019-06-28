@@ -110,6 +110,9 @@ class RelatedPeoplePlugin(CMSPluginBase):
         context['title'] = instance.title
         context['icon'] = instance.icon
         context['image'] = instance.image
+        context['more_button_is_shown'] = instance.more_button_is_shown
+        context['more_button_text'] = instance.more_button_text
+        context['more_button_link'] = instance.more_button_link
 
         qs = instance.related_people.published()
         related_groups = instance.related_groups.all()
