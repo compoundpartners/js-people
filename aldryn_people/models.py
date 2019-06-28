@@ -229,6 +229,11 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         return self.groups.first()
 
     @property
+    def primary_company(self):
+        if IS_THERE_COMPANIES:
+            return self.companies.first()
+
+    @property
     def comment(self):
         return self.safe_translation_getter('description', '')
 
@@ -333,10 +338,13 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         if self.website:
             vcard.add_line('URL', self.website)
 
+        if self.primary_company:
+            vcard.add_line('ORG', self.primary_company.name)
+
         if self.primary_group:
             group_name = self.primary_group.safe_translation_getter(
                 'name', default="Group: {0}".format(self.primary_group.pk))
-            if group_name:
+            if group_name and not self.primary_company:
                 vcard.add_line('ORG', group_name)
             if (self.primary_group.address or self.primary_group.city or
                     self.primary_group.postal_code):
