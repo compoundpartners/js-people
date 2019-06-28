@@ -486,21 +486,16 @@ class RelatedPeoplePlugin(CMSPlugin):
         return text_type(self.pk)
 
 
-@receiver(post_save, dispatch_uid='service_update_search_data')
+@receiver(post_save, dispatch_uid='person_update_search_data')
 def update_search_data(sender, instance, **kwargs):
-    """
-    Upon detecting changes in a plugin used in an service's content
-    (PlaceholderField), update the service's search_index so that we can
-    perform simple searches even without Haystack, etc.
-    """
     is_cms_plugin = issubclass(instance.__class__, CMSPlugin)
 
     if Person.update_search_on_save and is_cms_plugin:
         placeholder = (getattr(instance, '_placeholder_cache', None) or
                        instance.placeholder)
         if hasattr(placeholder, '_attached_model_cache'):
-            if placeholder._attached_model_cache == Service:
+            if placeholder._attached_model_cache == Person:
                 person = placeholder._attached_model_cache.objects.language(
                     instance.language).get(content=placeholder.pk)
-                person.search_data = service.get_search_data(instance.language)
+                person.search_data = person.get_search_data(instance.language)
                 person.save()
