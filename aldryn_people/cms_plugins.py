@@ -104,6 +104,24 @@ class RelatedPeoplePlugin(CMSPluginBase):
     model = models.RelatedPeoplePlugin
     form = forms.RelatedPeoplePluginForm
 
+    fields = [
+        'title',
+        'icon',
+        'image',
+        'number_of_people',
+        'layout',
+        'more_button_is_shown',
+        'more_button_text',
+        'more_button_link',
+        'related_people',
+        'related_groups',
+        'related_locations',
+        'related_categories',
+        'related_services',
+    ]
+    if IS_THERE_COMPANIES:
+        fields.append('related_companies')
+
     def render(self, context, instance, placeholder):
         request = context.get('request')
         context['instance'] = instance
