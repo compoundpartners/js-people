@@ -23,8 +23,8 @@ def querystring_remove(context, remove_key):
 
 @register.simple_tag(takes_context=True)
 def display_choice(context, field):
-    value = field.value()
-    if field.value() and hasattr(field.field, 'choices'):
+    value = field.value() or ''
+    if value and hasattr(field.field, 'choices'):
         value = dict(field.field.choices).get(field.value())
         if not value:
             try:
