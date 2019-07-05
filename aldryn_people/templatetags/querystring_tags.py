@@ -4,20 +4,24 @@ from django import template
 register = template.Library()
 
 @register.simple_tag(takes_context=True)
-def querystring_add(context, add_key, add_value):
+def querystring_add(context, *args, **kwargs):
     request = context["request"]
     qs = request.GET.copy()
-    qs[add_key] = add_value
+    if len(args) == 2:
+        qs[args[0]] = args[1]
+    for key, value in kwargs.items():
+        qs[key] = value
 
     return "&".join(["{}={}".format(key, value) for key, value in qs.items()])
 
 @register.simple_tag(takes_context=True)
-def querystring_remove(context, remove_key):
+def querystring_remove(context, *args):
     request = context["request"]
-    qs = {}
+    qs = request.GET.copy()
     for key, value in request.GET.items():
-        if not key == remove_key:
-            qs[key] = value
+        for remove_key in args:
+            if key == remove_key and key in qs:
+                del qs[key]
 
     return "&".join(["{}={}".format(key, value) for key, value in qs.items()])
 
