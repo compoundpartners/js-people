@@ -115,6 +115,16 @@ DEFAULT_SORTING = getattr(
     'ALDRYN_PEOPLE_DEFAULT_SORTING',
     ('last_name',),
 )
+SITEMAP_CHANGEFREQ = getattr(
+    settings,
+    'ALDRYN_PEOPLE_SITEMAP_CHANGEFREQ',
+    'monthly',
+)
+SITEMAP_PRIORITY = getattr(
+    settings,
+    'ALDRYN_PEOPLE_SITEMAP_PRIORITY',
+    0.5,
+)
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company
