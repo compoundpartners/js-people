@@ -16,7 +16,12 @@ from django_filters.views import FilterMixin
 from . import DEFAULT_APP_NAMESPACE
 from .models import Group, Person
 from .filters import PeopleFilters
-from .constants import INDEX_GROUP_LIST, INDEX_DEFAULT_FILTERS, DEFAULT_SORTING
+from .constants import (
+    INDEX_GROUP_LIST,
+    INDEX_DEFAULT_FILTERS,
+    DEFAULT_SORTING,
+    SHOW_GROUP_LIST_VIEW_ON_INITIAL_SEARCH,
+)
 
 
 def get_language(request):
@@ -137,6 +142,8 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
     paginate_by = 20
 
     def dispatch(self, request, *args, **kwargs):
+        if SHOW_GROUP_LIST_VIEW_ON_INITIAL_SEARCH and not request.GET:
+            return GroupListView.as_view()(request, *args, **kwargs)
         self.request_language = get_language(request)
         self.request = request
         self.site_id = getattr(get_current_site(self.request), 'id', None)
