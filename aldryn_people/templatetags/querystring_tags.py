@@ -27,7 +27,7 @@ def querystring_remove(context, *args):
 
 @register.simple_tag(takes_context=True)
 def display_choice(context, field):
-    value = field.value() or ''
+    value = field.value() or '' if field else ''
     if value and hasattr(field.field, 'choices'):
         value = dict(field.field.choices).get(field.value())
         if not value:
@@ -44,4 +44,4 @@ def to_list(*args):
 
 @register.filter
 def if_value(values):
-    return [value for value in values if hasattr(value, 'value') and value.value()]
+    return [value for value in values if value and hasattr(value, 'value') and value.value()]
