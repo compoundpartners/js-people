@@ -14,23 +14,17 @@ from .constants import (
     ALDRYN_PEOPLE_HIDE_GROUPS,
     ALDRYN_PEOPLE_HIDE_LOCATION,
     IS_THERE_COMPANIES,
+    RELATED_PEOPLE_LAYOUT,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
-
-LAYOUT_CHOICES = [
-    ('cols', 'Columns'),
-    ('rows', 'Rows'),
-    ('hero', 'Hero'),
-    ('people', 'People'),
-]
 
 STATIC_URL = getattr(settings, 'STATIC_URL', settings.MEDIA_URL)
 
 
 class RelatedPeoplePluginForm(forms.ModelForm):
 
-    layout = forms.ChoiceField(LAYOUT_CHOICES)
+    layout = forms.ChoiceField(RELATED_PEOPLE_LAYOUT)
 
     related_people = SortedMultipleChoiceField(
         label='key people',

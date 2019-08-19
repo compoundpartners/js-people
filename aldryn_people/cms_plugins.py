@@ -13,6 +13,7 @@ from aldryn_people import models, forms, DEFAULT_APP_NAMESPACE
 from .utils import get_valid_languages
 from .constants import (
     IS_THERE_COMPANIES,
+    RELATED_PEOPLE_LAYOUT,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
@@ -99,7 +100,7 @@ plugin_pool.register_plugin(PeoplePlugin)
 class RelatedPeoplePlugin(CMSPluginBase):
     TEMPLATE_NAME = 'aldryn_people/plugins/related_people__%s.html'
     module = 'People'
-    render_template = TEMPLATE_NAME % forms.LAYOUT_CHOICES[0][0]
+    render_template = 'aldryn_people/plugins/related_people.html'
     name = _('Related People')
     model = models.RelatedPeoplePlugin
     form = forms.RelatedPeoplePluginForm

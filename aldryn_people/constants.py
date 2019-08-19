@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.conf import settings
+from django.utils.text import slugify
 
 UPDATE_SEARCH_DATA_ON_SAVE = getattr(
     settings,
@@ -130,6 +131,22 @@ SITEMAP_PRIORITY = getattr(
     'ALDRYN_PEOPLE_SITEMAP_PRIORITY',
     0.5,
 )
+RELATED_PEOPLE_LAYOUT = getattr(
+    settings,
+    'PEOPLE_RELATED_LAYOUT',
+    ()
+)
+if RELATED_PEOPLE_LAYOUT:
+    RELATED_PEOPLE_LAYOUT = zip(list(map(lambda s: slugify(s).replace('-', '_'), ('default',) + RELATED_PEOPLE_LAYOUT)), ('default',) + RELATED_PEOPLE_LAYOUT)
+else:
+    RELATED_PEOPLE_LAYOUT = (
+        ('cols', 'Columns'),
+        ('rows', 'Rows'),
+        ('hero', 'Hero'),
+        ('people', 'People')
+    )
+
+
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company
