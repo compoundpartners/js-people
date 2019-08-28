@@ -382,6 +382,27 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
             return qs.filter(app_config__namespace=article_category).distinct()
         return qs.distinct()
 
+    def related_events(self, event_category=None):
+        if hasattr(self, 'event_set'):
+            qs = self.event_set.published() | self.host_2.published() | self.host_3.published()
+            if event_category:
+                return qs.filter(app_config__namespace=event_category).distinct()
+            return qs.distinct().order_by('-event_start')
+
+    def related_upcoming_events(self, event_category=None):
+        if hasattr(self, 'event_set'):
+            qs = self.event_set.upcoming() | self.host_2.upcoming() | self.host_3.upcoming()
+            if event_category:
+                return qs.filter(app_config__namespace=event_category).distinct()
+            return qs.distinct().order_by('event_start')
+
+    def related_past_events(self, event_category=None):
+        if hasattr(self, 'event_set'):
+            qs = self.event_set.past() | self.host_2.past() | self.host_3.past()
+            if event_category:
+                return qs.filter(app_config__namespace=event_category).distinct()
+            return qs.distinct().order_by('-event_start')
+
     def related_services(self, service_category=None):
         if service_category:
             return self.services.published().filter(sections__namespace=service_category)
