@@ -68,7 +68,7 @@ class PersonAdmin(PlaceholderAdminMixin,
     else:
         list_filter = ['is_published', 'services', 'vcard_enabled']
 
-    search_fields = ('translations__first_name', 'translations__last_name', 'email', 'translations__function')
+    search_fields = ('first_name', 'last_name', 'email', 'translations__function')
 
     filter_horizontal = [
         'categories',
