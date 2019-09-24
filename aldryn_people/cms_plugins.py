@@ -14,6 +14,8 @@ from .utils import get_valid_languages
 from .constants import (
     IS_THERE_COMPANIES,
     RELATED_PEOPLE_LAYOUT,
+    ALDRYN_PEOPLE_HIDE_GROUPS,
+    ALDRYN_PEOPLE_HIDE_LOCATION,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
@@ -115,8 +117,12 @@ class RelatedPeoplePlugin(CMSPluginBase):
         'more_button_text',
         'more_button_link',
         'related_people',
-        'related_groups',
-        'related_locations',
+    ]
+    if not ALDRYN_PEOPLE_HIDE_GROUPS:
+        fields.append('related_groups')
+    if not ALDRYN_PEOPLE_HIDE_LOCATION:
+        fields.append('related_locations')
+    fields += [
         'related_categories',
         'related_services',
     ]
