@@ -30,6 +30,17 @@ def get_language(request):
         lang = get_language_from_request(request, check_path=True)
     return lang
 
+class EditModeMixin(object):
+    """
+    A mixin which sets the property 'edit_mode' with the truth value for
+    whether a user is logged-into the CMS and is in edit-mode.
+    """
+    edit_mode = False
+
+    def dispatch(self, request, *args, **kwargs):
+        self.edit_mode = (
+            self.request.toolbar and self.request.toolbar.edit_mode)
+        return super(EditModeMixin, self).dispatch(request, *args, **kwargs)
 
 class FilterFormMixin(object):
 
@@ -52,10 +63,14 @@ class LanguageChangerMixin(object):
         return super(LanguageChangerMixin, self).get(request, *args, **kwargs)
 
 
-class PublishedMixin(object):
+class PublishedMixin(EditModeMixin):
     def get_queryset(self):
         qs = super(PublishedMixin, self).get_queryset()
-        return qs.published()
+        user = self.request.user
+        user_can_edit = user.is_staff or user.is_superuser
+        if not (self.edit_mode or user_can_edit):
+            qs = qs.published()
+        return qs
 
 
 class AllowPKsTooMixin(object):
