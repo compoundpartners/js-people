@@ -5,18 +5,16 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import Count
-from django import forms
-from django.forms import widgets
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
 
 from django.utils.translation import ugettext_lazy as _
 
 from parler.admin import TranslatableAdmin
-from parler.forms import TranslatableModelForm
 from aldryn_translation_tools.admin import AllTranslationsMixin
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 
 from .models import Person, Group
+from .forms import PersonAdminForm
 
 from .constants import (
     ALDRYN_PEOPLE_USER_THRESHOLD,
@@ -36,23 +34,6 @@ from .constants import (
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
-
-class PersonAdminForm(TranslatableModelForm):
-    companies = forms.CharField(required=False, widget=forms.HiddenInput)
-
-    #class Meta:
-        #model = Person
-
-    def __init__(self, *args, **kwargs):
-        super(PersonAdminForm, self).__init__(*args, **kwargs)
-        if not ALDRYN_PEOPLE_SUMMARY_RICHTEXT:
-            self.fields['description'].widget = widgets.Textarea()
-        if IS_THERE_COMPANIES:
-            self.fields['companies'] = forms.ModelMultipleChoiceField(queryset=Company.objects.all(), required=False)# self.instance.companies
-            self.fields['companies'].widget = SortedFilteredSelectMultiple()
-            self.fields['companies'].queryset = Company.objects.all()
-            if self.instance.pk and self.instance.companies.count():
-                self.fields['companies'].initial = self.instance.companies.all()
 
 
 class PersonAdmin(PlaceholderAdminMixin,
@@ -201,7 +182,9 @@ class PersonAdmin(PlaceholderAdminMixin,
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         if IS_THERE_COMPANIES:
-            obj.companies = Company.objects.filter(pk__in=form.cleaned_data.get('companies'))
+            obj.companies.clear()
+            for company in form.cleaned_data.get('companies'):
+                obj.companies.add(company)
 
 
 

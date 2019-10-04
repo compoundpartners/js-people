@@ -3,9 +3,11 @@ from __future__ import unicode_literals
 from django import forms
 from django.conf import settings
 from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.forms import widgets
 from aldryn_categories.models import Category
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple, SortedMultipleChoiceField
 from django.utils.safestring import mark_safe
+from parler.forms import TranslatableModelForm
 from js_services.models import Service
 from js_locations.models import Location
 from . import models
@@ -15,11 +17,30 @@ from .constants import (
     ALDRYN_PEOPLE_HIDE_LOCATION,
     IS_THERE_COMPANIES,
     RELATED_PEOPLE_LAYOUT,
+    ALDRYN_PEOPLE_SUMMARY_RICHTEXT,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
 
 STATIC_URL = getattr(settings, 'STATIC_URL', settings.MEDIA_URL)
+
+
+class PersonAdminForm(TranslatableModelForm):
+    companies = forms.CharField(required=False, widget=forms.HiddenInput)
+
+    #class Meta:
+        #model = Person
+
+    def __init__(self, *args, **kwargs):
+        super(PersonAdminForm, self).__init__(*args, **kwargs)
+        if not ALDRYN_PEOPLE_SUMMARY_RICHTEXT:
+            self.fields['description'].widget = widgets.Textarea()
+        if IS_THERE_COMPANIES:
+            self.fields['companies'] = SortedMultipleChoiceField(queryset=Company.objects.all(), required=False)# self.instance.companies
+            self.fields['companies'].widget = SortedFilteredSelectMultiple()
+            self.fields['companies'].queryset = Company.objects.all()
+            if self.instance.pk and self.instance.companies.count():
+                self.fields['companies'].initial = self.instance.companies.all()
 
 
 class RelatedPeoplePluginForm(forms.ModelForm):
