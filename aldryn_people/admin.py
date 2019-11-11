@@ -5,13 +5,15 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import Count
+from django.contrib.admin.widgets import FilteredSelectMultiple
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
-
 from django.utils.translation import ugettext_lazy as _
-
 from parler.admin import TranslatableAdmin
 from aldryn_translation_tools.admin import AllTranslationsMixin
-from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
+try:
+    from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
+except:
+    SortedFilteredSelectMultiple = FilteredSelectMultiple
 
 from .models import Person, Group
 from .forms import PersonAdminForm
@@ -72,7 +74,7 @@ class PersonAdmin(PlaceholderAdminMixin,
             db_field, request, **kwargs)
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        if db_field.name in ['groups', 'services','companies']:
+        if db_field.name in ['groups', 'services']:
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super(PersonAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
@@ -183,9 +185,11 @@ class PersonAdmin(PlaceholderAdminMixin,
         super().save_model(request, obj, form, change)
         if IS_THERE_COMPANIES:
             obj.companies.clear()
+            i = 0
             for company in form.cleaned_data.get('companies'):
-                obj.companies.add(company)
-
+                through = obj.companies.through(company=company, person=obj, sort_value=i)
+                through.save()
+                i += 1
 
 
 class GroupAdmin(PlaceholderAdminMixin,

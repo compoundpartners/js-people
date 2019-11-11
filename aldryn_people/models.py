@@ -27,7 +27,6 @@ from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _, override, force_text
 from six import text_type
 
-from aldryn_common.admin_fields.sortedm2m import SortedM2MModelField
 from sortedm2m.fields import SortedManyToManyField
 from aldryn_translation_tools.models import (
     TranslatedAutoSlugifyMixin,
@@ -241,6 +240,13 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
     def comment(self):
         return self.safe_translation_getter('description', '')
 
+    @property
+    def sorted_companies(self):
+        if IS_THERE_COMPANIES:
+            return [obj.company for obj in self.companies.through.objects.filter(person=self).order_by('sort_value')]
+        else:
+            []
+
     def get_search_data(self, language=None, request=None):
         """
         Provides an index for use with Haystack, or, for populating
@@ -437,7 +443,7 @@ class BasePeoplePlugin(CMSPlugin):
         _('Style'), choices=STYLE_CHOICES,
         default=STYLE_CHOICES[0][0], max_length=50)
 
-    people = SortedM2MModelField(
+    people = SortedManyToManyField(
         Person, blank=True,
         help_text=_('Select and arrange specific people, or, leave blank to '
                     'select all.')
@@ -501,10 +507,10 @@ class RelatedPeoplePlugin(CMSPlugin):
     number_of_people = models.PositiveSmallIntegerField(verbose_name=_('Number of people'))
     layout = models.CharField(max_length=30, verbose_name=_('layout'))
     related_people = SortedManyToManyField(Person, verbose_name=_('key people'), blank=True, symmetrical=False)
-    related_groups = SortedM2MModelField(Group, verbose_name=_('related groups'), blank=True, symmetrical=False)
-    related_locations = SortedM2MModelField('js_locations.Location', verbose_name=_('related locations'), blank=True, symmetrical=False)
-    related_categories = SortedM2MModelField('aldryn_categories.Category', verbose_name=_('related categories'), blank=True, symmetrical=False)
-    related_services = SortedM2MModelField('js_services.Service', verbose_name=_('related services'), blank=True, symmetrical=False)
+    related_groups = SortedManyToManyField(Group, verbose_name=_('related groups'), blank=True, symmetrical=False)
+    related_locations = SortedManyToManyField('js_locations.Location', verbose_name=_('related locations'), blank=True, symmetrical=False)
+    related_categories = SortedManyToManyField('aldryn_categories.Category', verbose_name=_('related categories'), blank=True, symmetrical=False)
+    related_services = SortedManyToManyField('js_services.Service', verbose_name=_('related services'), blank=True, symmetrical=False)
     more_button_is_shown = models.BooleanField(blank=True, default=False, verbose_name=_('Show “See More Button”'))
     more_button_text = models.CharField(max_length=255, blank=True, verbose_name=_('See More Button Text'))
     more_button_link = models.CharField(max_length=255, blank=True, verbose_name=_('See More Button Link'))

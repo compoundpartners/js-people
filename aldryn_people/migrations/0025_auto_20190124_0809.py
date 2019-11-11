@@ -14,7 +14,7 @@ import sortedm2m.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('aldryn_categories', '0007_categorytranslation_landing_page'),
+        ('aldryn_categories', '0004_auto_20150623_0859'),
         migrations.swappable_dependency(settings.FILER_IMAGE_MODEL),
         ('cms', '0020_old_tree_cleanup'),
         ('aldryn_people', '0024_auto_20190114_1727'),

@@ -5,7 +5,12 @@ from django.conf import settings
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.forms import widgets
 from aldryn_categories.models import Category
-from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple, SortedMultipleChoiceField
+try:
+    from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple#, SortedMultipleChoiceField
+except:
+    SortedFilteredSelectMultiple = FilteredSelectMultiple
+    SortedMultipleChoiceField = forms.ModelMultipleChoiceField
+from sortedm2m.forms import SortedMultipleChoiceField
 from django.utils.safestring import mark_safe
 from parler.forms import TranslatableModelForm
 from js_services.models import Service
@@ -40,7 +45,7 @@ class PersonAdminForm(TranslatableModelForm):
             self.fields['companies'].widget = SortedFilteredSelectMultiple()
             self.fields['companies'].queryset = Company.objects.all()
             if self.instance.pk and self.instance.companies.count():
-                self.fields['companies'].initial = self.instance.companies.all()
+                self.fields['companies'].initial = self.instance.sorted_companies
 
 
 class RelatedPeoplePluginForm(forms.ModelForm):
@@ -51,7 +56,7 @@ class RelatedPeoplePluginForm(forms.ModelForm):
         label='key people',
         queryset=models.Person.objects.all(),
         required=False,
-        widget=SortedFilteredSelectMultiple(attrs={'verbose_name':'person', 'verbose_name_plural':'people'})
+        widget=SortedFilteredSelectMultiple('person', False, attrs={'verbose_name_plural':'people'})
     )
     related_groups = forms.ModelMultipleChoiceField(
         queryset=models.Group.objects.all(),
