@@ -4,18 +4,17 @@ from aldryn_people import __version__
 
 REQUIREMENTS = [
     'Django>=1.8,<2.0',
-    'aldryn-boilerplates',
+    'aldryn-boilerplates==0.8.0',
     'aldryn-common>=0.1.3',
     'aldryn-translation-tools>=0.1.0',
     'django-cms>=3.2',
     'django-parler>=1.4',
     'django-filer>=0.9.9',
-    'djangocms-text-ckeditor',
-    'easy-thumbnails',
-    'phonenumbers',
-    'six',
-    'django-filter',
-    'django-crispy-forms',
+    'djangocms-text-ckeditor==3.8.0',
+    'phonenumbers==8.11.0',
+    'six==1.13.0',
+    'django-filter==2.2.0',
+    'django-crispy-forms==1.8.1',
 
     # DO NOT REMOVE THE FOLLOWING, IT IS REQUIRED FOR EXISTING MIGRATIONS
     'django-phonenumber-field>=0.7.2,<2.0.0',

@@ -16,6 +16,12 @@ from .constants import (
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
 
+try:
+    from custom.aldryn_people.filters import CustomFilterMixin
+except:
+    class CustomFilterMixin(object):
+        pass
+
 
 class SearchInNamesFilter(django_filters.Filter):
 
@@ -50,7 +56,7 @@ class SearchFilter(django_filters.Filter):
         return qs
 
 
-class PeopleFilters(django_filters.FilterSet):
+class PeopleFilters(CustomFilterMixin, django_filters.FilterSet):
     name = SearchInNamesFilter(label='Search the directory')
     q = SearchInNamesFilter(label='Search the directory')
     category = django_filters.ModelChoiceFilter('categories', label='category', queryset=Category.objects.exclude(**ADDITIONAL_EXCLUDE.get('category', {})).order_by('translations__name'))
