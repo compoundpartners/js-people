@@ -5,6 +5,7 @@ from django.db.models import Q
 from django import forms
 from aldryn_categories.models import Category
 from js_services.models import Service
+from js_locations.models import Location
 import django_filters
 from . import models
 from .constants import (
@@ -63,6 +64,7 @@ class PeopleFilters(CustomFilterMixin, django_filters.FilterSet):
     service = django_filters.ModelChoiceFilter('services', label='service', queryset=Service.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('service', {})).order_by('translations__title'))
     group = django_filters.ModelChoiceFilter('groups', label='group', queryset=models.Group.objects.exclude(**ADDITIONAL_EXCLUDE.get('group', {})).order_by('translations__name'))
     letter = django_filters.CharFilter('last_name', 'istartswith')
+    location = django_filters.ModelChoiceFilter('locations', label='location', queryset=Location.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('location', {})).order_by('translations__name'))
 
     class Meta:
         model = models.Person
