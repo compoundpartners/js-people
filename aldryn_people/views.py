@@ -179,7 +179,7 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
         self.filterset = PeopleFilters(self.request.GET, queryset=self.get_queryset())
 
         if not self.filterset.is_bound or self.filterset.is_valid() or not self.get_strict():
-            self.object_list = self.filterset.qs
+            self.object_list = self.filterset.qs.distinct()
         else:
             self.object_list = self.filterset.queryset.none()
 
