@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 from aldryn_people import __version__
 
 REQUIREMENTS = [
-    'Django>=1.8,<2.0',
+    'Django>=1.8,<3.0',
     'aldryn-boilerplates==0.8.0',
     'aldryn-common>=0.1.3',
     'aldryn-translation-tools>=0.1.0',

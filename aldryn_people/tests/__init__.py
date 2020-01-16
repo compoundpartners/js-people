@@ -8,7 +8,11 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.contrib.sites.models import Site
-from django.core.urlresolvers import clear_url_caches
+try:
+    from django.core.urlresolvers import clear_url_caches
+except ImportError:
+    # Django 2.0
+    from django.urls import clear_url_caches
 from django.db import IntegrityError
 from django.test import RequestFactory, TestCase
 from django.utils.translation import override

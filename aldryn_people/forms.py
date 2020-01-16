@@ -50,7 +50,7 @@ class PersonAdminForm(TranslatableModelForm):
 
 class RelatedPeoplePluginForm(forms.ModelForm):
 
-    layout = forms.ChoiceField(RELATED_PEOPLE_LAYOUT)
+    layout = forms.ChoiceField(choices=RELATED_PEOPLE_LAYOUT)
 
     related_people = SortedMultipleChoiceField(
         label='key people',

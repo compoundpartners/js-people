@@ -15,16 +15,30 @@ import warnings
 try:
     from django.utils.encoding import force_unicode
 except ImportError:
-    from django.utils.encoding import force_text as force_unicode
+    try:
+        from django.utils.encoding import force_text as force_unicode
+    except ImportError:
+        def force_unicode(value):
+            return value.decode()
 
 from django.conf import settings
-from django.core.urlresolvers import reverse, NoReverseMatch
+try:
+    from django.core.urlresolvers import reverse, NoReverseMatch
+except ImportError:
+    # Django 2.0
+    from django.urls import reverse, NoReverseMatch
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
-from django.utils.translation import ugettext_lazy as _, override, force_text
+from django.utils.translation import ugettext_lazy as _, override
+try:
+    from django.utils.translation import force_text
+except ImportError:
+    # Django 2.0
+    def force_text(value):
+        return value.decode()
 from six import text_type
 
 from sortedm2m.fields import SortedManyToManyField
@@ -167,7 +181,7 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
     linkedin = models.URLField(
         verbose_name=_('linkedin'), null=True, blank=True, max_length=200)
     location = models.ForeignKey('js_locations.Location',
-        verbose_name=_('location'), null=True, blank=True)
+        on_delete=models.SET_NULL, verbose_name=_('location'), null=True, blank=True)
     website = models.URLField(
         verbose_name=_('website'), null=True, blank=True)
     groups = SortedManyToManyField(
@@ -185,6 +199,7 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         verbose_name=_('show on website'), default=True)
     user = models.OneToOneField(
         getattr(settings, 'AUTH_USER_MODEL', 'auth.User'),
+        on_delete=models.SET_NULL,
         null=True, blank=True, related_name='persons')
     categories = CategoryManyToManyField('aldryn_categories.Category',
          verbose_name=_('categories'), blank=True)
@@ -455,6 +470,7 @@ class BasePeoplePlugin(CMSPlugin):
     # https://github.com/divio/django-cms/issues/5030
     cmsplugin_ptr = models.OneToOneField(
         CMSPlugin,
+        on_delete=models.CASCADE,
         related_name='%(app_label)s_%(class)s',
         parent_link=True,
     )
@@ -499,11 +515,11 @@ class RelatedPeoplePlugin(CMSPlugin):
     # NOTE: This one does NOT subclass NewsBlogCMSPlugin. This is because this
     # plugin can really only be placed on the article detail view in an apphook.
     cmsplugin_ptr = models.OneToOneField(
-        CMSPlugin, related_name='+', parent_link=True)
+        CMSPlugin, on_delete=models.CASCADE, related_name='+', parent_link=True)
 
     title = models.CharField(max_length=255, blank=True, verbose_name=_('Title'))
     icon = Icon(blank=False, default='')
-    image = FilerImageField(null=True, blank=True, related_name="main_image")
+    image = FilerImageField(on_delete=models.SET_NULL, null=True, blank=True, related_name="main_image")
     number_of_people = models.PositiveSmallIntegerField(verbose_name=_('Number of people'))
     layout = models.CharField(max_length=30, verbose_name=_('layout'))
     related_people = SortedManyToManyField(Person, verbose_name=_('key people'), blank=True, symmetrical=False)
