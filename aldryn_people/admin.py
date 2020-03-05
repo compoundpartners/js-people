@@ -5,15 +5,15 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import Count
-from django.contrib.admin.widgets import FilteredSelectMultiple
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
 from django.utils.translation import ugettext_lazy as _
 from parler.admin import TranslatableAdmin
+from aldryn_apphooks_config.admin import BaseAppHookConfig, ModelAppHookConfig
 from aldryn_translation_tools.admin import AllTranslationsMixin
 try:
     from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 except:
-    SortedFilteredSelectMultiple = FilteredSelectMultiple
+    from django.contrib.admin.widgets import FilteredSelectMultiple as SortedFilteredSelectMultiple
 
 from .models import Person, Group
 from .forms import PersonAdminForm
@@ -26,6 +26,7 @@ from .constants import (
     ALDRYN_PEOPLE_HIDE_FACEBOOK,
     ALDRYN_PEOPLE_HIDE_TWITTER,
     ALDRYN_PEOPLE_HIDE_LINKEDIN,
+    ALDRYN_PEOPLE_HIDE_XING,
     ALDRYN_PEOPLE_HIDE_GROUPS,
     ALDRYN_PEOPLE_HIDE_LOCATION,
     ALDRYN_PEOPLE_HIDE_USER,
@@ -74,7 +75,7 @@ class PersonAdmin(PlaceholderAdminMixin,
             db_field, request, **kwargs)
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        if db_field.name in ['groups', 'services']:
+        if db_field.name in ['services']:
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super(PersonAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
@@ -113,6 +114,10 @@ class PersonAdmin(PlaceholderAdminMixin,
     if ALDRYN_PEOPLE_HIDE_LINKEDIN == 0:
         contact_fields += (
             'linkedin',
+        )
+    if ALDRYN_PEOPLE_HIDE_XING == 0:
+        contact_fields += (
+            'xing',
         )
     if ALDRYN_PEOPLE_HIDE_LOCATION == 0:
         contact_fields += (
@@ -156,6 +161,7 @@ class PersonAdmin(PlaceholderAdminMixin,
         'show_on_xml_sitemap',
         'noindex',
         'nofollow',
+        'canonical_url',
     )
 
     fieldsets = (

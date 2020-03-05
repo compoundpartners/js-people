@@ -51,6 +51,11 @@ ALDRYN_PEOPLE_HIDE_LINKEDIN = getattr(
     'ALDRYN_PEOPLE_HIDE_LINKEDIN',
     0,
 )
+ALDRYN_PEOPLE_HIDE_XING = getattr(
+    settings,
+    'ALDRYN_PEOPLE_HIDE_XING',
+    0,
+)
 ALDRYN_PEOPLE_HIDE_GROUPS = getattr(
     settings,
     'ALDRYN_PEOPLE_HIDE_GROUPS',
@@ -94,7 +99,7 @@ ADDITIONAL_EXCLUDE = getattr(
 SHOW_GROUP_LIST_VIEW = getattr(
     settings,
     'ALDRYN_PEOPLE_SHOW_GROUP_LIST_VIEW',
-    True,
+    False,
 )
 SHOW_GROUP_LIST_VIEW_ON_INITIAL_SEARCH = getattr(
     settings,

@@ -12,16 +12,15 @@ from aldryn_people.views import (
     SearchView,
     IndexView,
 )
-from .constants import URL_PREFIX, SHOW_GROUP_LIST_VIEW
+from .constants import (
+    URL_PREFIX,
+    SHOW_GROUP_LIST_VIEW,
+    ALDRYN_PEOPLE_HIDE_GROUPS,
+)
 
 urlpatterns = [
     url(r'^search/$',
         SearchView.as_view(), name='search'),
-
-    url(r'^group/(?P<pk>[0-9]+)/$',
-        GroupDetailView.as_view(), name='group-detail'),
-    url(r'^group/(?P<slug>[A-Za-z0-9_\-]+)/$',
-        GroupDetailView.as_view(), name='group-detail'),
 
     url(r'^(?P<pk>[0-9]+)/$',
         PersonDetailView.as_view(), name='person-detail'),
@@ -34,7 +33,14 @@ urlpatterns = [
         DownloadVcardView.as_view(), name='download_vcard'),
 
 ]
-if SHOW_GROUP_LIST_VIEW:
+if not ALDRYN_PEOPLE_HIDE_GROUPS:
+    urlpatterns += [
+        url(r'^group/(?P<pk>[0-9]+)/$',
+            GroupDetailView.as_view(), name='group-detail'),
+        url(r'^group/(?P<slug>[A-Za-z0-9_\-]+)/$',
+            GroupDetailView.as_view(), name='group-detail'),
+    ]
+if SHOW_GROUP_LIST_VIEW and not ALDRYN_PEOPLE_HIDE_GROUPS:
     urlpatterns.append(url(r'^$',
         GroupListView.as_view(), name='group-list')
     )

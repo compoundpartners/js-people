@@ -16,6 +16,7 @@ from parler.forms import TranslatableModelForm
 from js_services.models import Service
 from js_locations.models import Location
 from . import models
+from . import DEFAULT_APP_NAMESPACE
 
 from .constants import (
     ALDRYN_PEOPLE_HIDE_GROUPS,
@@ -32,6 +33,11 @@ STATIC_URL = getattr(settings, 'STATIC_URL', settings.MEDIA_URL)
 
 class PersonAdminForm(TranslatableModelForm):
     companies = forms.CharField(required=False, widget=forms.HiddenInput)
+    groups = forms.ModelMultipleChoiceField(
+        queryset=models.Group.objects.all().exclude(namespace=DEFAULT_APP_NAMESPACE),
+        required=False,
+        widget=FilteredSelectMultiple('groups', False)
+    )
 
     #class Meta:
         #model = Person
@@ -59,7 +65,7 @@ class RelatedPeoplePluginForm(forms.ModelForm):
         widget=SortedFilteredSelectMultiple('person', False, attrs={'verbose_name_plural':'people'})
     )
     related_groups = forms.ModelMultipleChoiceField(
-        queryset=models.Group.objects.all(),
+        queryset=models.Group.objects.all().exclude(namespace=DEFAULT_APP_NAMESPACE),
         required=False,
         widget=FilteredSelectMultiple('groups', False)
     )

@@ -12,6 +12,7 @@ from django.utils.translation import get_language_from_request
 from menus.utils import set_language_changer
 from parler.views import TranslatableSlugMixin
 from django_filters.views import FilterMixin
+from aldryn_apphooks_config.utils import get_app_instance
 
 from . import DEFAULT_APP_NAMESPACE
 from .models import Group, Person
@@ -155,21 +156,26 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
     model = Person
     template_name = 'aldryn_people/search.html'
     paginate_by = 20
+    namespace = DEFAULT_APP_NAMESPACE
 
     def dispatch(self, request, *args, **kwargs):
-        if SHOW_GROUP_LIST_VIEW_ON_INITIAL_SEARCH and not request.GET:
+        self.namespace, self.config = get_app_instance(request)
+        request.current_app = self.namespace
+        if SHOW_GROUP_LIST_VIEW_ON_INITIAL_SEARCH and not request.GET and self.namespace != DEFAULT_APP_NAMESPACE:
             return GroupListView.as_view()(request, *args, **kwargs)
         self.request_language = get_language(request)
         self.request = request
         self.site_id = getattr(get_current_site(self.request), 'id', None)
         self.valid_languages = get_valid_languages(
-            DEFAULT_APP_NAMESPACE, self.request_language, self.site_id)
+            self.namespace, self.request_language, self.site_id)
         return super(SearchView, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         qs = super(SearchView, self).get_queryset()
         # prepare language properties for filtering
-        if not self.request.GET and INDEX_DEFAULT_FILTERS:
+        if self.namespace != DEFAULT_APP_NAMESPACE:
+            qs = qs.filter(groups=self.config)
+        elif not self.request.GET and INDEX_DEFAULT_FILTERS:
             qs = qs.filter(**INDEX_DEFAULT_FILTERS)
         if DEFAULT_SORTING:
             qs = qs.order_by(*DEFAULT_SORTING)
@@ -202,6 +208,16 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
         context = super(SearchView, self).get_context_data(**kwargs)
         context['pagination'] = self.get_pagination_options()
         return context
+
+    def render_to_response(self, context, **response_kwargs):
+        if 'current_app' in response_kwargs:  # pragma: no cover
+            response_kwargs['current_app'] = self.namespace
+        return super(SearchView, self).render_to_response(context, **response_kwargs)
+
+    def get_template_names(self):
+        if self.namespace != DEFAULT_APP_NAMESPACE:
+            return 'aldryn_people/list.html'
+        return super(SearchView, self).get_template_names()
 
 
 class IndexView(FilterFormMixin, TemplateView):

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n cms_tags %}
+
+{% block content %}
+    {% placeholder "content" %}
+    {% for person in object_list %}
+        {% include "aldryn_people/includes/person_small.html" with person=person %}
+    {% endfor %}
+
+
+{% endblock content %}

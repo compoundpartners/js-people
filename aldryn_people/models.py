@@ -55,6 +55,7 @@ from djangocms_text_ckeditor.fields import HTMLField
 from djangocms_icon.fields import Icon
 from filer.fields.image import FilerImageField
 from parler.models import TranslatableModel, TranslatedFields
+from app_data import AppDataField
 
 from .managers import PeopleManager
 from .utils import get_additional_styles
@@ -96,6 +97,46 @@ class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         verbose_name=_('sorting field'), default=1,
         help_text=_('first with low value'))
 
+    #app confif fields and mithods
+    type = models.CharField(
+        _('Type'),
+        max_length=100,
+        default='aldryn_people.Group',
+    )
+    namespace = models.CharField(
+        _('Instance namespace'),
+        #default=None,
+        max_length=100,
+        unique=True,
+    )
+    app_data = AppDataField()
+
+    cmsapp = None
+
+    def save(self, *args, **kwargs):
+        self.type = '%s.%s' % (
+            self.__class__.__module__, self.__class__.__name__)
+        if not self.namespace or self.namespace.startswith('202'):
+            self.namespace = self.safe_translation_getter('slug')
+        super(Group, self).save(*args, **kwargs)
+
+    #def __str__(self):
+        #if self.cmsapp:
+            #return '%s / %s' % (self.cmsapp.name, self.namespace)
+        #else:
+            #return '%s / %s' % (self.type, self.namespace)
+
+    #def __getattr__(self, item):
+        #"""
+        #This allows to access config form attribute as normal model fields
+
+        #:param item:
+        #:return:
+        #"""
+        #try:
+            #return getattr(self.app_data.config, item)
+        #except Exception:
+            #raise AttributeError('attribute %s not found' % item)
 
     @property
     def company_name(self):
@@ -117,6 +158,7 @@ class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
     class Meta:
         verbose_name = _('Group')
         verbose_name_plural = _('Groups')
+        unique_together = ('type', 'namespace')
 
     def __str__(self):
         return self.safe_translation_getter(
@@ -180,6 +222,8 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         verbose_name=_('twitter'), null=True, blank=True, max_length=100)
     linkedin = models.URLField(
         verbose_name=_('linkedin'), null=True, blank=True, max_length=200)
+    xing = models.URLField(
+        verbose_name=_('xing'), null=True, blank=True, max_length=200)
     location = models.ForeignKey('js_locations.Location',
         on_delete=models.SET_NULL, verbose_name=_('location'), null=True, blank=True)
     website = models.URLField(
@@ -208,11 +252,19 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
     content = PlaceholderField('content',
         related_name='person_content')
     placeholder_sidebar = PlaceholderField('sidebar')
+    banner = PlaceholderField('person_banner',
+        related_name='person_banner')
 
     show_on_sitemap = models.BooleanField(_('Show on sitemap'), null=False, default=True)
     show_on_xml_sitemap = models.BooleanField(_('Show on xml sitemap'), null=False, default=True)
     noindex = models.BooleanField(_('noindex'), null=False, default=False)
     nofollow = models.BooleanField(_('nofollow'), null=False, default=False)
+    canonical_url = models.CharField(
+        blank=True,
+        null=True,
+        max_length=255,
+        verbose_name=_('Canonical URL')
+    )
 
     objects = PeopleManager()
 
@@ -479,7 +531,7 @@ class BasePeoplePlugin(CMSPlugin):
         abstract = True
 
     def copy_relations(self, oldinstance):
-        self.people = oldinstance.people.all()
+        self.people.set(oldinstance.people.all())
 
     def get_selected_people(self):
         return self.people.published().select_related('visual')
@@ -532,13 +584,13 @@ class RelatedPeoplePlugin(CMSPlugin):
     more_button_link = models.CharField(max_length=255, blank=True, verbose_name=_('See More Button Link'))
 
     def copy_relations(self, oldinstance):
-        self.related_people = oldinstance.related_people.all()
-        self.related_groups = oldinstance.related_groups.all()
-        self.related_locations = oldinstance.related_locations.all()
-        self.related_services = oldinstance.related_services.all()
-        self.related_categories = oldinstance.related_categories.all()
+        self.related_people.set(oldinstance.related_people.all())
+        self.related_groups.set(oldinstance.related_groups.all())
+        self.related_locations.set(oldinstance.related_locations.all())
+        self.related_services.set(oldinstance.related_services.all())
+        self.related_categories.set(oldinstance.related_categories.all())
         if IS_THERE_COMPANIES:
-            self.related_companies = oldinstance.related_companies.all()
+            self.related_companies.set(oldinstance.related_companies.all())
 
     def __str__(self):
         return text_type(self.pk)
