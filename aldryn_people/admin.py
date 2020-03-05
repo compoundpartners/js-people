@@ -28,11 +28,13 @@ from .constants import (
     ALDRYN_PEOPLE_HIDE_LINKEDIN,
     ALDRYN_PEOPLE_HIDE_XING,
     ALDRYN_PEOPLE_HIDE_GROUPS,
+    ALDRYN_PEOPLE_HIDE_CATEGORIES,
     ALDRYN_PEOPLE_HIDE_LOCATION,
     ALDRYN_PEOPLE_HIDE_USER,
     ALDRYN_PEOPLE_SHOW_SECONDARY_IMAGE,
     ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE,
     ALDRYN_PEOPLE_SUMMARY_RICHTEXT,
+    TRANSLATE_IS_PUBLISHED,
     IS_THERE_COMPANIES,
 )
 if IS_THERE_COMPANIES:
@@ -69,7 +71,7 @@ class PersonAdmin(PlaceholderAdminMixin,
                 model = Person._meta.get_field('user').model
                 if model.objects.count() > ALDRYN_PEOPLE_USER_THRESHOLD:
                     kwargs['widget'] = admin.widgets.ForeignKeyRawIdWidget(
-                        db_field.rel, self.admin_site, using=kwargs.get('using'))
+                        db_field.remote_field, self.admin_site, using=kwargs.get('using'))
                     return db_field.formfield(**kwargs)
         return super(PersonAdmin, self).formfield_for_foreignkey(
             db_field, request, **kwargs)
@@ -148,8 +150,11 @@ class PersonAdmin(PlaceholderAdminMixin,
         advanced_fields += (
             'groups',
         )
+    if ALDRYN_PEOPLE_HIDE_CATEGORIES == 0:
+        advanced_fields += (
+            'categories',
+        )
     advanced_fields += (
-        'categories',
         'services',
     )
     if IS_THERE_COMPANIES:
@@ -197,6 +202,17 @@ class PersonAdmin(PlaceholderAdminMixin,
                 through.save()
                 i += 1
 
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super(PersonAdmin, self).get_fieldsets(request, obj)
+        for fieldset in fieldsets:
+            if len(fieldset) == 2 and 'fields' in fieldset[1]:
+                fields = []
+                for field in fieldset[1]['fields']:
+                    if field  == 'is_published' and TRANSLATE_IS_PUBLISHED:
+                        field += '_trans'
+                    fields.append(field)
+                fieldset[1]['fields'] = fields
+        return fieldsets
 
 class GroupAdmin(PlaceholderAdminMixin,
                  AllTranslationsMixin,

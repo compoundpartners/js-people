@@ -43,11 +43,17 @@ class Form(forms.BaseForm):
     hide_groups = forms.CheckboxField(
         'Hide Groups', required=False, initial=False
     )
+    hide_categories = forms.CheckboxField(
+        'Hide Categoies', required=False, initial=False
+    )
     hide_location = forms.CheckboxField(
         'Hide Location', required=False, initial=False
     )
     hide_user = forms.CheckboxField(
         'Hide user', required=False, initial=False
+    )
+    translate_is_published = forms.CheckboxField(
+        'Translate show on website field', required=False, initial=False
     )
     people_plugin_styles = forms.CharField(
         'List of additional people plugin styles (comma separated)',
@@ -76,9 +82,11 @@ class Form(forms.BaseForm):
         settings['ALDRYN_PEOPLE_HIDE_GROUPS'] = int(data['hide_groups'])
         settings['ALDRYN_PEOPLE_HIDE_LOCATION'] = int(data['hide_location'])
         settings['ALDRYN_PEOPLE_HIDE_USER'] = int(data['hide_user'])
+        settings['ALDRYN_PEOPLE_HIDE_CATEGORIES'] = int(data['hide_categories'])
         settings['ALDRYN_PEOPLE_SHOW_SECONDARY_IMAGE'] = int(data['secondary_image'])
         settings['ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE'] = int(data['secondary_phone'])
         settings['ALDRYN_PEOPLE_SUMMARY_RICHTEXT'] = int(data['summary_richtext'])
+        settings['ALDRYN_PEOPLE_TRANSLATE_IS_PUBLISHED'] = int(data['translate_is_published'])
         settings['INSTALLED_APPS'].append('sortedm2m_filter_horizontal_widget')
         settings['INSTALLED_APPS'].append('django_filters')
         settings['INSTALLED_APPS'].append('crispy_forms')

@@ -61,6 +61,11 @@ ALDRYN_PEOPLE_HIDE_GROUPS = getattr(
     'ALDRYN_PEOPLE_HIDE_GROUPS',
     0,
 )
+ALDRYN_PEOPLE_HIDE_CATEGORIES = getattr(
+    settings,
+    'ALDRYN_PEOPLE_HIDE_CATEGORIES',
+    0,
+)
 ALDRYN_PEOPLE_HIDE_LOCATION = getattr(
     settings,
     'ALDRYN_PEOPLE_HIDE_LOCATION',
@@ -141,15 +146,13 @@ RELATED_PEOPLE_LAYOUT = getattr(
     'PEOPLE_RELATED_LAYOUT',
     ()
 )
-if RELATED_PEOPLE_LAYOUT:
+TRANSLATE_IS_PUBLISHED = getattr(
+    settings,
+    'ALDRYN_PEOPLE_TRANSLATE_IS_PUBLISHED',
+    False
+)
+if len(RELATED_PEOPLE_LAYOUT) == 0 or len(RELATED_PEOPLE_LAYOUT[0]) != 2:
     RELATED_PEOPLE_LAYOUT = zip(list(map(lambda s: slugify(s).replace('-', '_'), ('default',) + RELATED_PEOPLE_LAYOUT)), ('default',) + RELATED_PEOPLE_LAYOUT)
-else:
-    RELATED_PEOPLE_LAYOUT = (
-        ('cols', 'Columns'),
-        ('rows', 'Rows'),
-        ('hero', 'Hero'),
-        ('people', 'People')
-    )
 
 
 try:

@@ -161,7 +161,7 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
     def dispatch(self, request, *args, **kwargs):
         self.namespace, self.config = get_app_instance(request)
         request.current_app = self.namespace
-        if SHOW_GROUP_LIST_VIEW_ON_INITIAL_SEARCH and not request.GET and self.namespace != DEFAULT_APP_NAMESPACE:
+        if SHOW_GROUP_LIST_VIEW_ON_INITIAL_SEARCH and not request.GET and self.namespace == DEFAULT_APP_NAMESPACE:
             return GroupListView.as_view()(request, *args, **kwargs)
         self.request_language = get_language(request)
         self.request = request
@@ -179,7 +179,7 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
             qs = qs.filter(**INDEX_DEFAULT_FILTERS)
         if DEFAULT_SORTING:
             qs = qs.order_by(*DEFAULT_SORTING)
-        return qs.translated(*self.valid_languages)
+        return qs
 
     def get(self, request, *args, **kwargs):
         self.filterset = PeopleFilters(self.request.GET, queryset=self.get_queryset())

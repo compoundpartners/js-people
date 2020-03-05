@@ -66,6 +66,12 @@ from .constants import (
     IS_THERE_COMPANIES,
 )
 
+try:
+    from custom.aldryn_people.models import CustomPersonMixin
+except:
+    class CustomPersonMixin(object):
+        pass
+
 @python_2_unicode_compatible
 class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
             TranslatableModel):
@@ -178,7 +184,9 @@ class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
 
 
 @python_2_unicode_compatible
-class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
+class Person(CustomPersonMixin,
+             TranslationHelperMixin,
+             TranslatedAutoSlugifyMixin,
              TranslatableModel):
     update_search_on_save = UPDATE_SEARCH_DATA_ON_SAVE
 
@@ -198,7 +206,9 @@ class Person(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
             help_text=_("Leave blank to auto-generate a unique slug.")),
         function=models.CharField(_('role'), max_length=255, blank=True, default=''),
         description=HTMLField(_('description'), blank=True, default=''),
-        search_data=models.TextField(blank=True, editable=False)
+        search_data=models.TextField(blank=True, editable=False),
+        is_published_trans=models.BooleanField(
+            verbose_name=_('show on website'), default=True)
     )
     first_name = models.CharField(
         _('first name'), max_length=255, blank=False,

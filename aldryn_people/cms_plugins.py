@@ -165,7 +165,9 @@ class RelatedPeoplePlugin(CMSPluginBase):
         return context
 
     def get_render_template(self, context, instance, placeholder):
-        return self.TEMPLATE_NAME % instance.layout
+        if instance.layout:
+            return self.TEMPLATE_NAME % instance.layout
+        return self.render_template
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
