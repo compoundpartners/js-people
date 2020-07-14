@@ -27,6 +27,7 @@ try:
 except ImportError:
     # Django 2.0
     from django.urls import reverse, NoReverseMatch
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.dispatch import receiver
@@ -64,6 +65,7 @@ from . import DEFAULT_APP_NAMESPACE
 from .constants import (
     UPDATE_SEARCH_DATA_ON_SAVE,
     IS_THERE_COMPANIES,
+    TRANSLATE_IS_PUBLISHED,
 )
 
 try:
@@ -102,6 +104,7 @@ class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
     sorting = models.PositiveSmallIntegerField(
         verbose_name=_('sorting field'), default=1,
         help_text=_('first with low value'))
+    custom_fields_settings = JSONField(blank=True, null=True)
 
     #app confif fields and mithods
     type = models.CharField(
@@ -249,6 +252,8 @@ class Person(CustomPersonMixin,
         related_name='second_person_visual')
     vcard_enabled = models.BooleanField(
         verbose_name=_('enable vCard download'), default=True)
+    details_enabled = models.BooleanField(
+        verbose_name=_('enable details'), default=True)
     is_published = models.BooleanField(
         verbose_name=_('show on website'), default=True)
     user = models.OneToOneField(
@@ -275,6 +280,7 @@ class Person(CustomPersonMixin,
         max_length=255,
         verbose_name=_('Canonical URL')
     )
+    custom_fields = JSONField(blank=True, null=True)
 
     objects = PeopleManager()
 
@@ -323,6 +329,17 @@ class Person(CustomPersonMixin,
             return [obj.company for obj in self.companies.through.objects.filter(person=self).order_by('sort_value')]
         else:
             []
+
+    @property
+    def published(self):
+        """
+        Returns True only if the article (is_published == True) AND has a
+        published_date that has passed.
+        """
+        language = get_current_language()
+        if TRANSLATE_IS_PUBLISHED:
+            return self.safe_translation_getter('is_published_trans', language_code=language, any_language=False) or False
+        return self.is_published
 
     def get_search_data(self, language=None, request=None):
         """
@@ -376,6 +393,17 @@ class Person(CustomPersonMixin,
             except NoReverseMatch:
                 url = ''
         return url
+
+    def get_public_url(self, language=None):
+        if not language:
+            language = get_current_language()
+        if not TRANSLATE_IS_PUBLISHED and self.is_published:
+            return self.get_absolute_url(language)
+        if (TRANSLATE_IS_PUBLISHED and \
+                (self.safe_translation_getter('is_published_trans', language_code=language, any_language=False) or False)):
+            return self.get_absolute_url(language)
+        return ''
+
 
     def get_vcard_url(self, language=None):
         if not language:

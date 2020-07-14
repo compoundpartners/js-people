@@ -16,7 +16,7 @@ except:
     from django.contrib.admin.widgets import FilteredSelectMultiple as SortedFilteredSelectMultiple
 
 from .models import Person, Group
-from .forms import PersonAdminForm
+from .forms import PersonAdminForm, GroupAdminForm
 
 from .constants import (
     ALDRYN_PEOPLE_USER_THRESHOLD,
@@ -40,19 +40,54 @@ from .constants import (
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
 
+def make_published(modeladmin, request, queryset):
+    if TRANSLATE_IS_PUBLISHED:
+        for i in queryset.all():
+            i.is_published_trans = True
+            i.save()
+    else:
+        queryset.update(is_published=True)
+make_published.short_description = _(
+    "Mark selected as published")
+
+def make_unpublished(modeladmin, request, queryset):
+    if TRANSLATE_IS_PUBLISHED:
+        for i in queryset.all():
+            i.is_published_trans = False
+            i.save()
+    else:
+        queryset.update(is_published=False)
+make_unpublished.short_description = _(
+    "Mark selected as not published")
+
+def make_details_enabled(modeladmin, request, queryset):
+    queryset.update(details_enabled=True)
+make_details_enabled.short_description = _(
+    "Mark selected as details enabled")
+
+def make_not_details_enabled(modeladmin, request, queryset):
+    queryset.update(details_enabled=False)
+make_not_details_enabled.short_description = _(
+    "Mark selected as not details enabled")
+
 
 class PersonAdmin(PlaceholderAdminMixin,
                   AllTranslationsMixin,
                   TranslatableAdmin):
 
+    actions = (
+        make_details_enabled, make_not_details_enabled,
+        make_published, make_unpublished,
+    )
+
     form = PersonAdminForm
     list_display = [
-        '__str__', 'email', 'is_published', 'vcard_enabled', ]
+        '__str__', 'email', 'is_published', 'details_enabled', ]
     if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
         list_display += ['num_groups',]
-        list_filter = ['is_published', 'services', 'groups', 'vcard_enabled']
+        list_filter = ['is_published', 'details_enabled', 'services', 'groups', 'vcard_enabled']
     else:
-        list_filter = ['is_published', 'services', 'vcard_enabled']
+        list_filter = ['is_published', 'details_enabled', 'services', 'vcard_enabled']
 
     search_fields = ('first_name', 'last_name', 'email', 'translations__function')
 
@@ -143,8 +178,9 @@ class PersonAdmin(PlaceholderAdminMixin,
         )
     main_fields += (
         'slug',
-        'function', 'description', 'is_published',
-        )
+        'function', 'description',
+        'is_published', 'details_enabled',
+    )
     advanced_fields = ()
     if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
         advanced_fields += (
@@ -214,10 +250,20 @@ class PersonAdmin(PlaceholderAdminMixin,
                 fieldset[1]['fields'] = fields
         return fieldsets
 
+    def get_list_display(self, request):
+        fields = []
+        list_display = super(PersonAdmin, self).get_list_display(request)
+        for field in list_display:
+            if field  == 'is_published' and TRANSLATE_IS_PUBLISHED:
+                field += '_trans'
+            fields.append(field)
+        return fields
+
 class GroupAdmin(PlaceholderAdminMixin,
                  AllTranslationsMixin,
                  TranslatableAdmin):
 
+    form = GroupAdminForm
     list_display = ['__str__', 'city', 'num_people', ]
     search_filter = ['translations__name']
     fieldsets = (

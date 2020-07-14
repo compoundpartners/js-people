@@ -172,4 +172,4 @@ class RelatedPeoplePlugin(CMSPluginBase):
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         if IS_THERE_COMPANIES:
-            obj.related_companies = Company.objects.filter(pk__in=form.cleaned_data.get('related_companies'))
+            obj.related_companies.set(Company.objects.filter(pk__in=form.cleaned_data.get('related_companies')))

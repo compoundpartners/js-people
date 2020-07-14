@@ -18,6 +18,11 @@ class PublishedQuerySet(TranslatableQuerySet):
             return self.translated(is_published_trans=True)
         return self.filter(is_published=True)
 
+    def published_one_of_trans(self):
+        if TRANSLATE_IS_PUBLISHED:
+            return self.filter(translations__is_published_trans=True)
+        return self.published()
+
 
 class PeopleManager(TranslatableManager):
     def get_queryset(self):
@@ -26,3 +31,5 @@ class PeopleManager(TranslatableManager):
     def published(self):
         return self.get_queryset().published()
 
+    def published_one_of_trans(self):
+        return self.get_queryset().published_one_of_trans()

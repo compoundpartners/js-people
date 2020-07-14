@@ -60,7 +60,7 @@ class LanguageChangerMixin(object):
     def get(self, request, *args, **kwargs):
         if not hasattr(self, 'object'):
             self.object = self.get_object()
-        set_language_changer(request, self.object.get_absolute_url)
+        set_language_changer(request, self.object.get_public_url)
         return super(LanguageChangerMixin, self).get(request, *args, **kwargs)
 
 
@@ -157,6 +157,9 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
     template_name = 'aldryn_people/search.html'
     paginate_by = 20
     namespace = DEFAULT_APP_NAMESPACE
+
+    def get_strict(self):
+        return False
 
     def dispatch(self, request, *args, **kwargs):
         self.namespace, self.config = get_app_instance(request)

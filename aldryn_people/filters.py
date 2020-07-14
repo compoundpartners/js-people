@@ -60,11 +60,11 @@ class SearchFilter(django_filters.Filter):
 class PeopleFilters(CustomFilterMixin, django_filters.FilterSet):
     name = SearchInNamesFilter(label='Search the directory')
     q = SearchInNamesFilter(label='Search the directory')
-    category = django_filters.ModelChoiceFilter('categories', label='category', queryset=Category.objects.exclude(**ADDITIONAL_EXCLUDE.get('category', {})).order_by('translations__name'))
-    service = django_filters.ModelChoiceFilter('services', label='service', queryset=Service.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('service', {})).order_by('translations__title'))
-    group = django_filters.ModelChoiceFilter('groups', label='group', queryset=models.Group.objects.exclude(**ADDITIONAL_EXCLUDE.get('group', {})).order_by('translations__name'))
+    category = django_filters.ModelChoiceFilter('categories', label='category', empty_label='by category', queryset=Category.objects.exclude(**ADDITIONAL_EXCLUDE.get('category', {})))
+    service = django_filters.ModelChoiceFilter('services', label='service', empty_label='by service', queryset=Service.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('service', {})))
+    group = django_filters.ModelChoiceFilter('groups', label='group', empty_label='by role', queryset=models.Group.objects.exclude(**ADDITIONAL_EXCLUDE.get('group', {})))
     letter = django_filters.CharFilter('last_name', 'istartswith')
-    location = django_filters.ModelChoiceFilter('location', label='location', queryset=Location.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('location', {})).order_by('translations__name'))
+    location = django_filters.ModelChoiceFilter('location', label='location', empty_label='by location', queryset=Location.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('location', {})))
 
     class Meta:
         model = models.Person
@@ -72,18 +72,25 @@ class PeopleFilters(CustomFilterMixin, django_filters.FilterSet):
 
     def __init__(self, values, *args, **kwargs):
         super(PeopleFilters, self).__init__(values, *args, **kwargs)
-        self.filters['category'].extra.update({'empty_label': 'by category'})
-        self.filters['service'].extra.update({'empty_label': 'by service'})
-        self.filters['location'].extra.update({'empty_label': 'by location'})
-        self.filters['group'].extra.update({'empty_label': 'by role'})
+        self.sort_choices(self.filters['group'])
+        self.sort_choices(self.filters['service'])
+        self.sort_choices(self.filters['category'])
+        self.sort_choices(self.filters['location'])
+
         if UPDATE_SEARCH_DATA_ON_SAVE:
             self.filters['q'] = SearchFilter(label='Search the directory')
         if IS_THERE_COMPANIES:
-            self.filters['company'] = django_filters.ModelChoiceFilter('companies', label='company', queryset=Company.objects.exclude(**ADDITIONAL_EXCLUDE.get('company', {})).order_by('name'))
-            self.filters['company'].extra.update({'empty_label': 'by company'})
+            self.filters['company'] = django_filters.ModelChoiceFilter('companies', label='company', empty_label='company', queryset=Company.objects.exclude(**ADDITIONAL_EXCLUDE.get('company', {})).order_by('name'))
         if ADD_FILTERED_CATEGORIES:
             for category in ADD_FILTERED_CATEGORIES:
                 qs = Category.objects.filter(translations__slug=category[0])[0].get_children().exclude(**ADDITIONAL_EXCLUDE.get(category[0], {})).order_by('translations__name') if Category.objects.filter(translations__slug=category[0]).exists() else Category.objects.none()
                 name = category[0].replace('-', '_')
                 self.filters[name] = django_filters.ModelChoiceFilter('categories', label=category[1], queryset=qs)
                 self.filters[name].extra.update({'empty_label': 'by %s' % category[1]})
+
+    def sort_choices(self, field):
+        field = field.field
+        if isinstance(field.choices, django_filters.fields.ModelChoiceIterator):
+            choices = [(obj.pk, str(obj)) for obj in field.choices.queryset]
+            field.iterator = django_filters.fields.ChoiceIterator
+            field._set_choices(sorted(choices, key=lambda item: item[1]))

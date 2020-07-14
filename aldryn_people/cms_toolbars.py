@@ -2,12 +2,18 @@
 
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext as _, get_language_from_request
 from six import iteritems
+
+from django.conf import settings
+from django.utils.translation import ugettext as _, get_language_from_request
 
 from cms.toolbar_base import CMSToolbar
 from cms.toolbar_pool import toolbar_pool
+from cms.cms_toolbars import LANGUAGE_MENU_IDENTIFIER
 from cms.utils.urlutils import admin_reverse
+from cms.utils.i18n import get_language_tuple, get_language_dict
+from menus.utils import DefaultLanguageChanger
+
 from parler.models import TranslatableModel
 
 from .models import Group, Person
@@ -139,3 +145,14 @@ class PeopleToolbar(CMSToolbar):
                 url = admin_reverse(
                     'aldryn_people_person_change', args=(person.pk, ))
                 menu.add_modal_item(_('Edit person'), url=url, active=True)
+
+        if settings.USE_I18N:# and not self._language_menu:
+            self._language_menu = self.toolbar.get_or_create_menu(LANGUAGE_MENU_IDENTIFIER, _('Language'), position=-1)
+            self._language_menu.items = []
+            for code, name in get_language_tuple(self.current_site.pk):
+                try:
+                    url = DefaultLanguageChanger(self.request)(code)
+                except NoReverseMatch:
+                    url = None
+                if url:
+                    self._language_menu.add_link_item(name, url=url, active=self.current_lang == code)

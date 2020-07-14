@@ -15,6 +15,19 @@ from django.utils.safestring import mark_safe
 from parler.forms import TranslatableModelForm
 from js_services.models import Service
 from js_locations.models import Location
+try:
+    from js_custom_fields.forms import CustomFieldsFormMixin, CustomFieldsSettingsFormMixin
+except:
+    class CustomFieldsFormMixin(object):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields['custom_fields'].widget = forms.HiddenInput()
+
+    class CustomFieldsSettingsFormMixin(object):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields['custom_fields_settings'].widget = forms.HiddenInput()
+
 from . import models
 from . import DEFAULT_APP_NAMESPACE
 
@@ -31,13 +44,14 @@ if IS_THERE_COMPANIES:
 STATIC_URL = getattr(settings, 'STATIC_URL', settings.MEDIA_URL)
 
 
-class PersonAdminForm(TranslatableModelForm):
+class PersonAdminForm(CustomFieldsFormMixin, TranslatableModelForm):
     companies = forms.CharField(required=False, widget=forms.HiddenInput)
     groups = forms.ModelMultipleChoiceField(
         queryset=models.Group.objects.all().exclude(namespace=DEFAULT_APP_NAMESPACE),
         required=False,
         widget=FilteredSelectMultiple('groups', False)
     )
+    custom_fields = 'get_custom_fields'
 
     #class Meta:
         #model = Person
@@ -53,6 +67,16 @@ class PersonAdminForm(TranslatableModelForm):
             if self.instance.pk and self.instance.companies.count():
                 self.fields['companies'].initial = self.instance.sorted_companies
 
+    def get_custom_fields(self):
+        fields = {}
+        if self.instance:
+            for group in self.instance.groups.all():
+                fields.update(group.custom_fields_settings)
+        return fields
+
+
+class GroupAdminForm(CustomFieldsFormMixin, TranslatableModelForm):
+    pass
 
 class RelatedPeoplePluginForm(forms.ModelForm):
 
