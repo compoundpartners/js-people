@@ -2,11 +2,7 @@
 
 from __future__ import unicode_literals
 
-from django.conf import settings
-from django.contrib import admin
-from django.db.models import Count
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
-from django.utils.translation import ugettext_lazy as _
 from parler.admin import TranslatableAdmin
 from aldryn_apphooks_config.admin import BaseAppHookConfig, ModelAppHookConfig
 from aldryn_translation_tools.admin import AllTranslationsMixin
@@ -14,7 +10,29 @@ try:
     from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 except:
     from django.contrib.admin.widgets import FilteredSelectMultiple as SortedFilteredSelectMultiple
-
+from cms.utils.i18n import get_current_language, get_language_list
+from cms.utils import copy_plugins, get_current_site
+from django.db import transaction
+from django.db.models import Count
+from django.db.models.query import EmptyQuerySet
+from django import forms
+from django.conf.urls import url
+from django.conf import settings
+from django.contrib import admin
+from django.contrib.sites.models import Site
+from django.forms import widgets
+from django.views.decorators.http import require_POST
+from django.utils.translation import ugettext_lazy as _
+from django.utils.decorators import method_decorator
+from django.utils.encoding import force_text
+from django.core.exceptions import PermissionDenied
+from django.http import (
+    HttpResponseRedirect,
+    HttpResponse,
+    Http404,
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
+)
 from .models import Person, Group
 from .forms import PersonAdminForm, GroupAdminForm
 
@@ -39,6 +57,9 @@ from .constants import (
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
+
+require_POST = method_decorator(require_POST)
+
 
 def make_published(modeladmin, request, queryset):
     if TRANSLATE_IS_PUBLISHED:
@@ -258,6 +279,51 @@ class PersonAdmin(PlaceholderAdminMixin,
                 field += '_trans'
             fields.append(field)
         return fields
+
+    def get_site(self, request):
+        site_id = request.session.get('cms_admin_site')
+        if not site_id:
+            return get_current_site()
+        try:
+            site = Site.objects._get_site_by_id(site_id)
+        except Site.DoesNotExist:
+            site = get_current_site()
+        return site
+
+    @require_POST
+    @transaction.atomic
+    def copy_language(self, request, obj_id):
+        obj = self.get_object(request, object_id=obj_id)
+        source_language = request.POST.get('source_language')
+        target_language = request.POST.get('target_language')
+
+        if not self.has_change_permission(request, obj=obj):
+            raise PermissionDenied
+
+        if obj is None:
+            raise Http404
+
+        if not target_language or not target_language in get_language_list(site_id=self.get_site(request).pk):
+            return HttpResponseBadRequest(force_text(_("Language must be set to a supported language!")))
+
+        for placeholder in obj.get_placeholders():
+            plugins = list(
+                placeholder.get_plugins(language=source_language).order_by('path'))
+            if not placeholder.has_add_plugins_permission(request.user, plugins):
+                return HttpResponseForbidden(force_text(_('You do not have permission to copy these plugins.')))
+            copy_plugins.copy_plugins_to(plugins, placeholder, target_language)
+        return HttpResponse("ok")
+
+    def get_urls(self):
+        urlpatterns = super().get_urls()
+        opts = self.model._meta
+        info = opts.app_label, opts.model_name
+        return [url(
+            r'^(.+)/copy_language/$',
+            self.admin_site.admin_view(self.copy_language),
+            name='{0}_{1}_copy_language'.format(*info)
+        )] + urlpatterns
+
 
 class GroupAdmin(PlaceholderAdminMixin,
                  AllTranslationsMixin,

@@ -6,7 +6,13 @@ from six import iteritems
 
 from django.conf import settings
 from django.utils.translation import ugettext as _, get_language_from_request
+try:
+    from django.core.urlresolvers import reverse, NoReverseMatch
+except ImportError:
+    # Django 2.0
+    from django.urls import reverse, NoReverseMatch
 
+from cms.api import get_page_draft
 from cms.toolbar_base import CMSToolbar
 from cms.toolbar_pool import toolbar_pool
 from cms.cms_toolbars import LANGUAGE_MENU_IDENTIFIER
@@ -20,6 +26,7 @@ from .models import Group, Person
 from .constants import ALDRYN_PEOPLE_HIDE_GROUPS
 from . import DEFAULT_APP_NAMESPACE
 
+ADD_OBJ_LANGUAGE_BREAK = "Add object language Break"
 
 def get_obj_from_request(model, request,
                          pk_url_kwarg='pk',
@@ -74,6 +81,7 @@ class PeopleToolbar(CMSToolbar):
     supported_apps = ('aldryn_people', )
 
     def populate(self):
+        self.page = get_page_draft(self.request.current_page)
         user = getattr(self.request, 'user', None)
         try:
             view_name = self.request.resolver_match.view_name
@@ -89,9 +97,9 @@ class PeopleToolbar(CMSToolbar):
             elif view_name in [
                     '%s:person-detail' % DEFAULT_APP_NAMESPACE,
                     '%s:download_vcard' % DEFAULT_APP_NAMESPACE]:
-                person = get_obj_from_request(Person, self.request)
-                if person and person.groups:
-                    group = person.primary_group
+                obj = get_obj_from_request(Person, self.request)
+                if obj and obj.groups:
+                    group = obj.primary_group
             elif view_name == '%s:group-list' % DEFAULT_APP_NAMESPACE:
                 pass
             else:
@@ -141,18 +149,58 @@ class PeopleToolbar(CMSToolbar):
                 url = get_admin_url('aldryn_people_person_add', **url_args)
                 menu.add_modal_item(_('Add new person'), url=url)
 
-            if change_person_perm and person:
+            if change_person_perm and obj:
                 url = admin_reverse(
-                    'aldryn_people_person_change', args=(person.pk, ))
+                    'aldryn_people_person_change', args=(obj.pk, ))
                 menu.add_modal_item(_('Edit person'), url=url, active=True)
 
         if settings.USE_I18N:# and not self._language_menu:
-            self._language_menu = self.toolbar.get_or_create_menu(LANGUAGE_MENU_IDENTIFIER, _('Language'), position=-1)
-            self._language_menu.items = []
-            for code, name in get_language_tuple(self.current_site.pk):
-                try:
-                    url = DefaultLanguageChanger(self.request)(code)
-                except NoReverseMatch:
-                    url = None
-                if url:
-                    self._language_menu.add_link_item(name, url=url, active=self.current_lang == code)
+            if obj:
+                self._language_menu = self.toolbar.get_or_create_menu(LANGUAGE_MENU_IDENTIFIER, _('Language'), position=-1)
+                self._language_menu.items = []
+                languages = get_language_dict(self.current_site.pk)
+                page_languages = self.page.get_languages()
+                remove = []
+
+                for code, name in get_language_tuple():
+                    if code in obj.get_available_languages():
+                        remove.append((code, name))
+                        try:
+                            url = obj.get_absolute_url(code)
+                        except NoReverseMatch:
+                            url = None
+                        if url and code in page_languages:
+                            self._language_menu.add_link_item(name, url=url, active=self.current_lang == code)
+
+                if self.toolbar.edit_mode_active:
+                    add = [l for l in languages.items() if l not in remove]
+                    copy = [(code, name) for code, name in languages.items() if code != self.current_lang and (code, name) in remove]
+
+                    if (add or len(remove) > 1 or copy) and change_person_perm:
+                        self._language_menu.add_break(ADD_OBJ_LANGUAGE_BREAK)
+
+                        if add:
+                            add_plugins_menu = self._language_menu.get_or_create_menu('{0}-add-trans'.format(LANGUAGE_MENU_IDENTIFIER), _('Add Translation'))
+                            for code, name in add:
+                                url_args = {}
+                                url = '%s?language=%s' % (get_admin_url('aldryn_people_person_change',
+                                    [obj.pk], **url_args), code)
+                                add_plugins_menu.add_modal_item(name, url=url)
+
+                        if len(remove) > 1:
+                            remove_plugins_menu = self._language_menu.get_or_create_menu('{0}-del-trans'.format(LANGUAGE_MENU_IDENTIFIER), _('Delete Translation'))
+                            for code, name in remove:
+                                url = get_admin_url('aldryn_people_person_delete_translation', [obj.pk, code])
+                                remove_plugins_menu.add_modal_item(name, url=url)
+
+                        if copy:
+                            copy_plugins_menu = self._language_menu.get_or_create_menu('{0}-copy-trans'.format(LANGUAGE_MENU_IDENTIFIER), _('Copy all plugins'))
+                            title = _('from %s')
+                            question = _('Are you sure you want to copy all plugins from %s?')
+                            url = get_admin_url('aldryn_people_person_copy_language', [obj.pk])
+                            for code, name in copy:
+                                copy_plugins_menu.add_ajax_item(
+                                    title % name, action=url,
+                                    data={'source_language': code, 'target_language': self.current_lang},
+                                    question=question % name, on_success=self.toolbar.REFRESH_PAGE
+                                )

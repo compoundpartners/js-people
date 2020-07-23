@@ -487,6 +487,13 @@ class Person(CustomPersonMixin,
     def name(self):
         return self.__str__()
 
+    def get_placeholders(self):
+        return [
+            self.content,
+            self.placeholder_sidebar,
+            self.banner,
+        ]
+
     def related_articles(self, article_category=None):
         qs = self.article_set.published() | self.author_2.published() | self.author_3.published()
         if article_category:
