@@ -21,6 +21,7 @@ from .constants import (
     INDEX_GROUP_LIST,
     INDEX_DEFAULT_FILTERS,
     DEFAULT_SORTING,
+    SHOW_INDEX_VIEW_ON_INITIAL_SEARCH,
     SHOW_GROUP_LIST_VIEW_ON_INITIAL_SEARCH,
 )
 
@@ -164,8 +165,11 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
     def dispatch(self, request, *args, **kwargs):
         self.namespace, self.config = get_app_instance(request)
         request.current_app = self.namespace
-        if SHOW_GROUP_LIST_VIEW_ON_INITIAL_SEARCH and not request.GET and self.namespace == DEFAULT_APP_NAMESPACE:
-            return GroupListView.as_view()(request, *args, **kwargs)
+        if not request.GET and self.namespace == DEFAULT_APP_NAMESPACE:
+            if SHOW_INDEX_VIEW_ON_INITIAL_SEARCH:
+                return IndexView.as_view()(request, *args, **kwargs)
+            elif SHOW_GROUP_LIST_VIEW_ON_INITIAL_SEARCH:
+                return GroupListView.as_view()(request, *args, **kwargs)
         self.request_language = get_language(request)
         self.request = request
         self.site_id = getattr(get_current_site(self.request), 'id', None)

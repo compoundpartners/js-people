@@ -201,6 +201,7 @@ class PersonAdmin(PlaceholderAdminMixin,
         'slug',
         'function', 'description',
         'is_published', 'details_enabled',
+        'custom_fields',
     )
     advanced_fields = ()
     if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
@@ -339,6 +340,8 @@ class GroupAdmin(PlaceholderAdminMixin,
                 'slug',
                 'description',
                 'sorting',
+                'custom_fields_settings',
+                'custom_fields',
             ),
         }),
         (_('Contact (untranslated)'), {

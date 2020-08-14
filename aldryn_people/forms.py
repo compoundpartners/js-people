@@ -21,12 +21,14 @@ except:
     class CustomFieldsFormMixin(object):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            self.fields['custom_fields'].widget = forms.HiddenInput()
+            if 'custom_fields' in self.fields:
+                self.fields['custom_fields'].widget = forms.HiddenInput()
 
     class CustomFieldsSettingsFormMixin(object):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            self.fields['custom_fields_settings'].widget = forms.HiddenInput()
+            if 'custom_fields_settings' in self.fields:
+                self.fields['custom_fields_settings'].widget = forms.HiddenInput()
 
 from . import models
 from . import DEFAULT_APP_NAMESPACE
@@ -37,6 +39,8 @@ from .constants import (
     IS_THERE_COMPANIES,
     RELATED_PEOPLE_LAYOUT,
     ALDRYN_PEOPLE_SUMMARY_RICHTEXT,
+    PERSON_CUSTOM_FIELDS,
+    GROUP_CUSTOM_FIELDS,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
@@ -68,15 +72,16 @@ class PersonAdminForm(CustomFieldsFormMixin, TranslatableModelForm):
                 self.fields['companies'].initial = self.instance.sorted_companies
 
     def get_custom_fields(self):
-        fields = {}
+        fields = PERSON_CUSTOM_FIELDS
         if self.instance:
             for group in self.instance.groups.all():
-                fields.update(group.custom_fields_settings)
+                if group.custom_fields_settings:
+                    fields.update(group.custom_fields_settings)
         return fields
 
 
-class GroupAdminForm(CustomFieldsFormMixin, TranslatableModelForm):
-    pass
+class GroupAdminForm(CustomFieldsFormMixin, CustomFieldsSettingsFormMixin, TranslatableModelForm):
+    custom_fields = GROUP_CUSTOM_FIELDS
 
 class RelatedPeoplePluginForm(forms.ModelForm):
 

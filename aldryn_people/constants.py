@@ -111,6 +111,11 @@ SHOW_GROUP_LIST_VIEW_ON_INITIAL_SEARCH = getattr(
     'ALDRYN_PEOPLE_SHOW_GROUP_LIST_VIEW_ON_INITIAL_SEARCH',
     True,
 )
+SHOW_INDEX_VIEW_ON_INITIAL_SEARCH = getattr(
+    settings,
+    'ALDRYN_PEOPLE_SHOW_INDEX_VIEW_ON_INITIAL_SEARCH',
+    False,
+)
 URL_PREFIX = getattr(
     settings,
     'ALDRYN_PEOPLE_URL_PREFIX',
@@ -154,6 +159,16 @@ TRANSLATE_IS_PUBLISHED = getattr(
 if len(RELATED_PEOPLE_LAYOUT) == 0 or len(RELATED_PEOPLE_LAYOUT[0]) != 2:
     RELATED_PEOPLE_LAYOUT = zip(list(map(lambda s: slugify(s).replace('-', '_'), ('default',) + RELATED_PEOPLE_LAYOUT)), ('default',) + RELATED_PEOPLE_LAYOUT)
 
+PERSON_CUSTOM_FIELDS = getattr(
+    settings,
+    'ALDRYN_PEOPLE_PERSON_CUSTOM_FIELDS',
+    {},
+)
+GROUP_CUSTOM_FIELDS = getattr(
+    settings,
+    'ALDRYN_PEOPLE_GROUP_CUSTOM_FIELDS',
+    {},
+)
 
 try:
     IS_THERE_COMPANIES = True

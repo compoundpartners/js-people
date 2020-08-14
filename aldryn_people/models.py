@@ -105,6 +105,7 @@ class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         verbose_name=_('sorting field'), default=1,
         help_text=_('first with low value'))
     custom_fields_settings = JSONField(blank=True, null=True)
+    custom_fields = JSONField(blank=True, null=True)
 
     #app confif fields and mithods
     type = models.CharField(
