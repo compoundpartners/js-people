@@ -165,7 +165,7 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
     def dispatch(self, request, *args, **kwargs):
         self.namespace, self.config = get_app_instance(request)
         request.current_app = self.namespace
-        if not request.GET and self.namespace == DEFAULT_APP_NAMESPACE:
+        if (not request.GET or any(map(lambda x: x in request.GET, ['edit_off', 'edit', 'structure']))) and self.namespace == DEFAULT_APP_NAMESPACE:
             if SHOW_INDEX_VIEW_ON_INITIAL_SEARCH:
                 return IndexView.as_view()(request, *args, **kwargs)
             elif SHOW_GROUP_LIST_VIEW_ON_INITIAL_SEARCH:

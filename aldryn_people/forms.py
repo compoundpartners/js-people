@@ -73,7 +73,7 @@ class PersonAdminForm(CustomFieldsFormMixin, TranslatableModelForm):
 
     def get_custom_fields(self):
         fields = PERSON_CUSTOM_FIELDS
-        if self.instance:
+        if self.instance and self.instance.pk:
             for group in self.instance.groups.all():
                 if group.custom_fields_settings:
                     fields.update(group.custom_fields_settings)
