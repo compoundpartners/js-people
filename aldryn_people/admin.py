@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
+from parler.models import TranslationDoesNotExist
 from parler.admin import TranslatableAdmin
 from aldryn_apphooks_config.admin import BaseAppHookConfig, ModelAppHookConfig
 from aldryn_translation_tools.admin import AllTranslationsMixin
@@ -25,6 +26,7 @@ from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_text
+from django.utils.html import mark_safe
 from django.core.exceptions import PermissionDenied
 from django.http import (
     HttpResponseRedirect,
@@ -103,12 +105,12 @@ class PersonAdmin(PlaceholderAdminMixin,
 
     form = PersonAdminForm
     list_display = [
-        '__str__', 'email', 'is_published', 'details_enabled', ]
+        '__str__', 'email', 'is_published', ]
     if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
         list_display += ['num_groups',]
-        list_filter = ['is_published', 'details_enabled', 'services', 'groups', 'vcard_enabled']
+        list_filter = ['details_enabled', 'services', 'groups', 'vcard_enabled']
     else:
-        list_filter = ['is_published', 'details_enabled', 'services', 'vcard_enabled']
+        list_filter = ['details_enabled', 'services', 'vcard_enabled']
 
     search_fields = ('first_name', 'last_name', 'email', 'translations__function')
 
@@ -129,13 +131,13 @@ class PersonAdmin(PlaceholderAdminMixin,
                     kwargs['widget'] = admin.widgets.ForeignKeyRawIdWidget(
                         db_field.remote_field, self.admin_site, using=kwargs.get('using'))
                     return db_field.formfield(**kwargs)
-        return super(PersonAdmin, self).formfield_for_foreignkey(
+        return super().formfield_for_foreignkey(
             db_field, request, **kwargs)
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
         if db_field.name in ['services']:
             kwargs['widget'] = SortedFilteredSelectMultiple()
-        return super(PersonAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
 
     contact_fields = (
         'visual',
@@ -241,7 +243,7 @@ class PersonAdmin(PlaceholderAdminMixin,
 
 
     def get_queryset(self, request):
-        qs = super(PersonAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         qs = qs.annotate(group_count=Count('groups'))
         return qs
 
@@ -249,6 +251,10 @@ class PersonAdmin(PlaceholderAdminMixin,
         return obj.group_count
     num_groups.short_description = _('# Groups')
     num_groups.admin_order_field = 'group_count'
+
+    def is_published_trans_safe(self, obj):
+        return mark_safe('<img src="/static/admin/img/icon-yes.svg" alt="True">' if obj.safe_translation_getter('is_published_trans', default=False) else '<img src="/static/admin/img/icon-no.svg" alt="False">')
+    is_published_trans_safe.short_description = _('Show')
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
@@ -261,7 +267,7 @@ class PersonAdmin(PlaceholderAdminMixin,
                 i += 1
 
     def get_fieldsets(self, request, obj=None):
-        fieldsets = super(PersonAdmin, self).get_fieldsets(request, obj)
+        fieldsets = super().get_fieldsets(request, obj)
         for fieldset in fieldsets:
             if len(fieldset) == 2 and 'fields' in fieldset[1]:
                 fields = []
@@ -274,10 +280,10 @@ class PersonAdmin(PlaceholderAdminMixin,
 
     def get_list_display(self, request):
         fields = []
-        list_display = super(PersonAdmin, self).get_list_display(request)
+        list_display = super().get_list_display(request)
         for field in list_display:
             if field  == 'is_published' and TRANSLATE_IS_PUBLISHED:
-                field += '_trans'
+                field += '_trans_safe'
             fields.append(field)
         return fields
 
@@ -290,6 +296,9 @@ class PersonAdmin(PlaceholderAdminMixin,
         except Site.DoesNotExist:
             site = get_current_site()
         return site
+
+    def all_translations(self, object):
+        return mark_safe(super().all_translations(object))
 
     @require_POST
     @transaction.atomic
