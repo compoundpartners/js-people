@@ -21,6 +21,26 @@ ALDRYN_PEOPLE_USER_THRESHOLD = getattr(
     50,
 )
 
+ALDRYN_PEOPLE_HIDE_EMAIL = getattr(
+    settings,
+    'ALDRYN_PEOPLE_HIDE_EMAIL',
+    0,
+)
+ALDRYN_PEOPLE_HIDE_PHONE = getattr(
+    settings,
+    'ALDRYN_PEOPLE_HIDE_PHONE',
+    0,
+)
+ALDRYN_PEOPLE_HIDE_MOBILE = getattr(
+    settings,
+    'ALDRYN_PEOPLE_HIDE_MOBILE',
+    0,
+)
+ALDRYN_PEOPLE_HIDE_VCARD = getattr(
+    settings,
+    'ALDRYN_PEOPLE_HIDE_VCARD',
+    0,
+)
 ALDRYN_PEOPLE_HIDE_SUFFIX = getattr(
     settings,
     'ALDRYN_PEOPLE_HIDE_SUFFIX',

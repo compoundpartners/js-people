@@ -39,6 +39,10 @@ from .models import Person, Group
 from .forms import PersonAdminForm, GroupAdminForm
 
 from .constants import (
+    ALDRYN_PEOPLE_HIDE_EMAIL,
+    ALDRYN_PEOPLE_HIDE_PHONE,
+    ALDRYN_PEOPLE_HIDE_MOBILE,
+    ALDRYN_PEOPLE_HIDE_VCARD,
     ALDRYN_PEOPLE_USER_THRESHOLD,
     ALDRYN_PEOPLE_HIDE_SUFFIX,
     ALDRYN_PEOPLE_HIDE_FAX,
@@ -105,12 +109,12 @@ class PersonAdmin(PlaceholderAdminMixin,
 
     form = PersonAdminForm
     list_display = [
-        '__str__', 'email', 'is_published', ]
+        '__str__', 'is_published', ]
     if ALDRYN_PEOPLE_HIDE_GROUPS == 0:
         list_display += ['num_groups',]
-        list_filter = ['details_enabled', 'services', 'groups', 'vcard_enabled']
+        list_filter = ['details_enabled', 'services', 'groups']
     else:
-        list_filter = ['details_enabled', 'services', 'vcard_enabled']
+        list_filter = ['details_enabled', 'services']
 
     search_fields = ('first_name', 'last_name', 'email', 'translations__function')
 
@@ -146,11 +150,18 @@ class PersonAdmin(PlaceholderAdminMixin,
         contact_fields += (
             'second_visual',
         )
-    contact_fields += (
-        'email',
-        'mobile',
-        'phone',
-    )
+    if ALDRYN_PEOPLE_HIDE_EMAIL == 0:
+        contact_fields += (
+            'email',
+        )
+    if ALDRYN_PEOPLE_HIDE_MOBILE == 0:
+        contact_fields += (
+            'mobile',
+        )
+    if ALDRYN_PEOPLE_HIDE_PHONE == 0:
+        contact_fields += (
+            'phone',
+        )
     if ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE != 0:
         contact_fields += (
             'second_phone',
@@ -183,9 +194,10 @@ class PersonAdmin(PlaceholderAdminMixin,
         contact_fields += (
             'location',
         )
-    contact_fields += (
-        'vcard_enabled',
-    )
+    if ALDRYN_PEOPLE_HIDE_VCARD == 0:
+        contact_fields += (
+            'vcard_enabled',
+        )
     if ALDRYN_PEOPLE_HIDE_USER == 0:
         contact_fields += (
             'user',
