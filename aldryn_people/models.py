@@ -186,6 +186,9 @@ class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         with override(language):
             return reverse('%s:group-detail' % DEFAULT_APP_NAMESPACE, kwargs=kwargs)
 
+    def get_public_url(self, language=None):
+        return self.get_absolute_url(language)
+
 
 @python_2_unicode_compatible
 class Person(CustomPersonMixin,
