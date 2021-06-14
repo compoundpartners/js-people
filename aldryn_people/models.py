@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import base64
 import six
 from aldryn_people.vcard import Vcard
+from django.utils.text import slugify
 
 try:
     import urlparse
@@ -107,7 +108,7 @@ class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
     custom_fields_settings = JSONField(blank=True, null=True)
     custom_fields = JSONField(blank=True, null=True)
 
-    #app confif fields and mithods
+    #app config fields and mithods
     type = models.CharField(
         _('Type'),
         max_length=100,
@@ -127,7 +128,7 @@ class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         self.type = '%s.%s' % (
             self.__class__.__module__, self.__class__.__name__)
         if not self.namespace or self.namespace.startswith('202'):
-            self.namespace = self.safe_translation_getter('slug')
+            self.namespace = 'group-%s' % slugify(self.safe_translation_getter('name'))
         super(Group, self).save(*args, **kwargs)
 
     #def __str__(self):

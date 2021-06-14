@@ -13,6 +13,7 @@ from menus.utils import set_language_changer
 from parler.views import TranslatableSlugMixin
 from django_filters.views import FilterMixin
 from aldryn_apphooks_config.utils import get_app_instance
+from js_locations.models import Location
 
 from . import DEFAULT_APP_NAMESPACE
 from .models import Group, Person
@@ -23,8 +24,10 @@ from .constants import (
     DEFAULT_SORTING,
     SHOW_INDEX_VIEW_ON_INITIAL_SEARCH,
     SHOW_GROUP_LIST_VIEW_ON_INITIAL_SEARCH,
+    IS_THERE_COMPANIES,
 )
-
+if IS_THERE_COMPANIES:
+    from js_companies.models import Company
 
 def get_language(request):
     lang = getattr(request, 'LANGUAGE_CODE', None)
@@ -158,6 +161,8 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
     template_name = 'aldryn_people/search.html'
     paginate_by = 20
     namespace = DEFAULT_APP_NAMESPACE
+    config = None
+    config_type = None
 
     def get_strict(self):
         return False
@@ -180,8 +185,16 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
     def get_queryset(self):
         qs = super(SearchView, self).get_queryset()
         # prepare language properties for filtering
-        if self.namespace != DEFAULT_APP_NAMESPACE:
-            qs = qs.filter(groups=self.config)
+        if self.config:
+            if isinstance(self.config, Group) and self.namespace != DEFAULT_APP_NAMESPACE:
+                qs = qs.filter(groups=self.config)
+                self.config_type = 'Group'
+            elif isinstance(self.config, Location):
+                qs = qs.filter(location=self.config)
+                self.config_type = 'Location'
+            elif IS_THERE_COMPANIES and isinstance(self.config, Company):
+                self.config_type = 'Company'
+                qs = qs.filter(companies=self.config)
         elif not self.request.GET and INDEX_DEFAULT_FILTERS:
             qs = qs.filter(**INDEX_DEFAULT_FILTERS)
         if DEFAULT_SORTING:
@@ -214,6 +227,8 @@ class SearchView(FilterMixin, PublishedMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(SearchView, self).get_context_data(**kwargs)
         context['pagination'] = self.get_pagination_options()
+        context['config'] = self.config
+        context['config_type'] = self.config_type
         return context
 
     def render_to_response(self, context, **response_kwargs):

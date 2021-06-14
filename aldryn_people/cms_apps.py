@@ -8,10 +8,12 @@ from django.utils.translation import ugettext_lazy as _
 from cms.app_base import CMSApp
 from cms.apphook_pool import apphook_pool
 from aldryn_apphooks_config.app_base import CMSConfigApp
-from .constants import ALDRYN_PEOPLE_HIDE_GROUPS
+from js_locations.models import Location
+from .constants import ALDRYN_PEOPLE_HIDE_GROUPS, IS_THERE_COMPANIES
 from . import DEFAULT_APP_NAMESPACE
 from . import views
 from . import models
+
 
 if ALDRYN_PEOPLE_HIDE_GROUPS:
     class PeopleApp(CMSApp):
@@ -42,4 +44,26 @@ else:
         def get_urls(self, page=None, language=None, **kwargs):
             if page and page.application_namespace == DEFAULT_APP_NAMESPACE:
                 return self.urls
+            return [url(r'^$', views.SearchView.as_view(), name='index'),]
+
+
+@apphook_pool.register
+class PeopleLocationApp(CMSConfigApp):
+    name = _('People by location')
+    app_name = 'js_people_location'
+    app_config = Location
+
+    def get_urls(self, page=None, language=None, **kwargs):
+        return [url(r'^$', views.SearchView.as_view(), name='index'),]
+
+if IS_THERE_COMPANIES:
+    from js_companies.models import Company
+
+    @apphook_pool.register
+    class PeopleCompanyApp(CMSConfigApp):
+        name = _('People by company')
+        app_name = 'js_people_company'
+        app_config = Company
+
+        def get_urls(self, page=None, language=None, **kwargs):
             return [url(r'^$', views.SearchView.as_view(), name='index'),]

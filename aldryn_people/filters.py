@@ -77,17 +77,25 @@ class PeopleFilters(CustomFilterMixin, django_filters.FilterSet):
             self.filters['q'] = SearchFilter(label='Search the directory')
         selects = ['location', 'category', 'service', 'group']
         if IS_THERE_COMPANIES:
-            self.filters['company'] = django_filters.ModelChoiceFilter('companies', label='company', empty_label='by company', queryset=Company.objects.exclude(**ADDITIONAL_EXCLUDE.get('company', {})).order_by('name'))
+            self.filters['company'] = django_filters.ModelChoiceFilter('companies', label='company', empty_label='by company', queryset=Company.objects.exclude(**ADDITIONAL_EXCLUDE.get('company', {})))
             selects.append('company')
+
         if ADD_FILTERED_CATEGORIES:
             for category in ADD_FILTERED_CATEGORIES:
-                qs = Category.objects.filter(translations__slug=category[0])[0].get_children().exclude(**ADDITIONAL_EXCLUDE.get(category[0], {})).order_by('translations__name') if Category.objects.filter(translations__slug=category[0]).exists() else Category.objects.none()
+                qs = Category.objects.filter(translations__slug=category[0])[0].get_children().exclude(**ADDITIONAL_EXCLUDE.get(category[0], {})) if Category.objects.filter(translations__slug=category[0]).exists() else Category.objects.none()
                 name = category[0].replace('-', '_')
                 self.filters[name] = django_filters.ModelChoiceFilter('categories', label=category[1], queryset=qs)
                 self.filters[name].extra.update({'empty_label': 'by %s' % category[1]})
                 selects.append(name)
 
         self.set_empty_labels(**FILTER_EMPTY_LABELS)
+
+        for select in selects[:]:
+            self.filters['%s_filtered' % select] = django_filters.ModelChoiceFilter(self.filters[select].field_name)
+            self.filters['%s_filtered' % select].label = self.filters[select].label
+            self.filters['%s_filtered' % select].extra['empty_label'] = self.filters[select].extra['empty_label']
+            self.filters['%s_filtered' % select].queryset = self.filters[select].queryset.filter(**{'%s__in' % ('people' if select in ['group', 'company'] else 'person') :self.queryset}).distinct()
+            selects.append('%s_filtered' % select)
 
         for field in selects:
             self.sort_choices(self.filters[field])
