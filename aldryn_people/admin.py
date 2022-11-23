@@ -117,7 +117,7 @@ class PersonAdmin(PlaceholderAdminMixin,
     else:
         list_filter = ['details_enabled', 'services']
 
-    search_fields = ('first_name', 'last_name', 'email', 'function')
+    search_fields = ('first_name', 'last_name', 'email', 'translations__function')
 
     filter_horizontal = [
         'categories',
@@ -288,7 +288,7 @@ class PersonAdmin(PlaceholderAdminMixin,
                 for field in fieldset[1]['fields']:
                     if field  == 'is_published' and TRANSLATE_IS_PUBLISHED:
                         field += '_trans'
-                    elif field  in ['visual', 'second_visual'] and True:#TRANSLATE_VISUAL:
+                    elif field  in ['visual', 'second_visual'] and TRANSLATE_VISUAL:
                         field += '_trans'
                     fields.append(field)
                 fieldset[1]['fields'] = fields

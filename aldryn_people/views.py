@@ -51,9 +51,8 @@ class FilterFormMixin(object):
 
     def get_context_data(self, **kwargs):
         data = super(FilterFormMixin, self).get_context_data(**kwargs)
-        qs = data['object_list'] if 'object_list' in data else Person.objects.none()
         data['filter'] = PeopleFilters(
-            self.request.GET, queryset=qs)
+            self.request.GET, queryset=Person.objects.none())
         return data
 
 

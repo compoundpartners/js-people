@@ -179,7 +179,7 @@ TRANSLATE_IS_PUBLISHED = getattr(
 TRANSLATE_VISUAL = getattr(
     settings,
     'ALDRYN_PEOPLE_TRANSLATE_VISUAL',
-    True
+    False
 )
 if len(RELATED_PEOPLE_LAYOUT) == 0 or len(RELATED_PEOPLE_LAYOUT[0]) != 2:
     RELATED_PEOPLE_LAYOUT = zip(list(map(lambda s: slugify(s).replace('-', '_'), ('default',) + RELATED_PEOPLE_LAYOUT)), ('default',) + RELATED_PEOPLE_LAYOUT)

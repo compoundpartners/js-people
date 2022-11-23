@@ -665,9 +665,12 @@ def update_search_data(sender, instance, **kwargs):
     if Person.update_search_on_save and is_cms_plugin:
         placeholder = (getattr(instance, '_placeholder_cache', None) or
                        instance.placeholder)
-        if hasattr(placeholder, '_attached_model_cache'):
-            if placeholder._attached_model_cache == Person and placeholder.slot == 'content':
-                person = placeholder._attached_model_cache.objects.language(
-                    instance.language).get(content=placeholder.pk)
-                person.search_data = person.get_search_data(instance.language)
-                person.save()
+        if hasattr(placeholder, '_attached_model_cache') and hasattr(placeholder, '_attached_field_cache'):
+            field = placeholder._attached_field_cache
+            model = placeholder._attached_model_cache
+            if field and model == Person:
+                placeholder.clear_cache(instance.language)
+                filters = {}
+                filters[field.name] = placeholder.pk
+                obj = model.objects.language(instance.language).get(**filters)
+                obj.save()

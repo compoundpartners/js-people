@@ -91,11 +91,14 @@ class PeopleFilters(CustomFilterMixin, django_filters.FilterSet):
         self.set_empty_labels(**FILTER_EMPTY_LABELS)
 
         for select in selects[:]:
-            self.filters['%s_filtered' % select] = django_filters.ModelChoiceFilter(self.filters[select].field_name)
-            self.filters['%s_filtered' % select].label = self.filters[select].label
-            self.filters['%s_filtered' % select].extra['empty_label'] = self.filters[select].extra['empty_label']
-            self.filters['%s_filtered' % select].queryset = self.filters[select].queryset.filter(**{'%s__in' % ('people' if select in ['group', 'company'] else 'person') :self.queryset}).distinct()
-            selects.append('%s_filtered' % select)
+            try:
+                self.filters['%s_filtered' % select] = django_filters.ModelChoiceFilter(self.filters[select].field_name)
+                self.filters['%s_filtered' % select].label = self.filters[select].label
+                self.filters['%s_filtered' % select].extra['empty_label'] = self.filters[select].extra['empty_label']
+                self.filters['%s_filtered' % select].queryset = self.filters[select].queryset.filter(**{'%s__in' % ('people' if select in ['group', 'company'] else 'person') :self.queryset}).distinct()
+                selects.append('%s_filtered' % select)
+            except:
+                pass
 
         for field in selects:
             self.sort_choices(self.filters[field])
