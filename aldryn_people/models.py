@@ -216,7 +216,19 @@ class Person(CustomPersonMixin,
         description=HTMLField(_('description'), blank=True, default=''),
         search_data=models.TextField(blank=True, editable=False),
         is_published_trans=models.BooleanField(
-            verbose_name=_('show on website'), default=True)
+            verbose_name=_('show on website'), default=True),
+        layout_trans=models.CharField(
+            blank=True,
+            default='',
+            max_length=60,
+            verbose_name=_('layout')
+        ),
+        visual_trans = FilerImageField(
+            null=True, blank=True, default=None, on_delete=models.SET_NULL),
+        second_visual_trans = FilerImageField(
+            null=True, blank=True, default=None, on_delete=models.SET_NULL,
+            related_name='second_person_visual_trans'),
+
     )
     first_name = models.CharField(
         _('first name'), max_length=255, blank=False,

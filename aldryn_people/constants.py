@@ -176,6 +176,11 @@ TRANSLATE_IS_PUBLISHED = getattr(
     'ALDRYN_PEOPLE_TRANSLATE_IS_PUBLISHED',
     False
 )
+TRANSLATE_VISUAL = getattr(
+    settings,
+    'ALDRYN_PEOPLE_TRANSLATE_VISUAL',
+    True
+)
 if len(RELATED_PEOPLE_LAYOUT) == 0 or len(RELATED_PEOPLE_LAYOUT[0]) != 2:
     RELATED_PEOPLE_LAYOUT = zip(list(map(lambda s: slugify(s).replace('-', '_'), ('default',) + RELATED_PEOPLE_LAYOUT)), ('default',) + RELATED_PEOPLE_LAYOUT)
 
@@ -200,6 +205,18 @@ FILTER_EMPTY_LABELS.update(getattr(
     'PEOPLE_FILTER_EMPTY_LABELS',
     {}
 ))
+
+PERSON_LAYOUTS = getattr(
+    settings,
+    'PEOPLE_PERSON_LAYOUTS',
+    (),
+)
+PERSON_LAYOUT_CHOICES = list(PERSON_LAYOUTS)
+if len(PERSON_LAYOUTS) == 0 or len(PERSON_LAYOUTS[0]) != 2:
+    PERSON_LAYOUT_CHOICES = zip(list(map(lambda s: slugify(s).replace('-', '_'), ('',) + PERSON_LAYOUTS)), ('default',) + PERSON_LAYOUTS)
+else:
+    PERSON_LAYOUT_CHOICES.insert(0, ('', 'default'))
+
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company

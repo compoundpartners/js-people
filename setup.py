@@ -10,14 +10,15 @@ REQUIREMENTS = [
     'django-cms>=3.2',
     'django-parler>=1.4',
     'django-filer>=0.9.9',
-    'djangocms-text-ckeditor==3.8.0',
+    'djangocms-text-ckeditor',
     'phonenumbers==8.11.0',
     'six==1.13.0',
     'django-filter==2.2.0',
     'django-crispy-forms==1.8.1',
 
     # DO NOT REMOVE THE FOLLOWING, IT IS REQUIRED FOR EXISTING MIGRATIONS
-    'django-phonenumber-field>=0.7.2,<2.0.0',
+    #'django-phonenumber-field>=0.7.2,<2.0.0',
+    'django-phonenumber-field>=0.7.2',
 ]
 
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers

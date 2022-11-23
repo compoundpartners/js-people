@@ -59,6 +59,7 @@ from .constants import (
     ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE,
     ALDRYN_PEOPLE_SUMMARY_RICHTEXT,
     TRANSLATE_IS_PUBLISHED,
+    TRANSLATE_VISUAL,
     IS_THERE_COMPANIES,
 )
 if IS_THERE_COMPANIES:
@@ -116,7 +117,7 @@ class PersonAdmin(PlaceholderAdminMixin,
     else:
         list_filter = ['details_enabled', 'services']
 
-    search_fields = ('first_name', 'last_name', 'email', 'translations__function')
+    search_fields = ('first_name', 'last_name', 'email', 'function')
 
     filter_horizontal = [
         'categories',
@@ -215,6 +216,7 @@ class PersonAdmin(PlaceholderAdminMixin,
         'slug',
         'function', 'description',
         'is_published', 'details_enabled',
+        'layout_trans',
         'custom_fields',
     )
     advanced_fields = ()
@@ -285,6 +287,8 @@ class PersonAdmin(PlaceholderAdminMixin,
                 fields = []
                 for field in fieldset[1]['fields']:
                     if field  == 'is_published' and TRANSLATE_IS_PUBLISHED:
+                        field += '_trans'
+                    elif field  in ['visual', 'second_visual'] and True:#TRANSLATE_VISUAL:
                         field += '_trans'
                     fields.append(field)
                 fieldset[1]['fields'] = fields
@@ -387,6 +391,9 @@ class GroupAdmin(PlaceholderAdminMixin,
         return obj.people_count
     num_people.short_description = _('# People')
     num_people.admin_order_field = 'people_count'
+
+    def all_translations(self, object):
+        return mark_safe(super().all_translations(object))
 
 
 admin.site.register(Person, PersonAdmin)

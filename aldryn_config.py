@@ -67,6 +67,9 @@ class Form(forms.BaseForm):
     translate_is_published = forms.CheckboxField(
         'Translate show on website field', required=False, initial=False
     )
+    translate_visual = forms.CheckboxField(
+        'Translate people visuals', required=False, initial=False
+    )
     people_plugin_styles = forms.CharField(
         'List of additional people plugin styles (comma separated)',
         required=False
@@ -103,6 +106,7 @@ class Form(forms.BaseForm):
         settings['ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE'] = int(data['secondary_phone'])
         settings['ALDRYN_PEOPLE_SUMMARY_RICHTEXT'] = int(data['summary_richtext'])
         settings['ALDRYN_PEOPLE_TRANSLATE_IS_PUBLISHED'] = int(data['translate_is_published'])
+        settings['ALDRYN_PEOPLE_TRANSLATE_VISUAL'] = int(data['translate_visual'])
         settings['INSTALLED_APPS'].append('sortedm2m_filter_horizontal_widget')
         settings['INSTALLED_APPS'].append('django_filters')
         settings['INSTALLED_APPS'].append('crispy_forms')

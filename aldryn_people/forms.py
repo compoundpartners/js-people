@@ -41,6 +41,7 @@ from .constants import (
     ALDRYN_PEOPLE_SUMMARY_RICHTEXT,
     PERSON_CUSTOM_FIELDS,
     GROUP_CUSTOM_FIELDS,
+    PERSON_LAYOUT_CHOICES,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
@@ -55,6 +56,7 @@ class PersonAdminForm(CustomFieldsFormMixin, TranslatableModelForm):
         required=False,
         widget=FilteredSelectMultiple('groups', False)
     )
+    layout_trans = forms.ChoiceField(choices=PERSON_LAYOUT_CHOICES, required=False)
     custom_fields = 'get_custom_fields'
 
     #class Meta:

@@ -123,6 +123,10 @@ class PersonDetailView(PublishedMixin, LanguageChangerMixin, AllowPKsTooMixin,
     model = Person
     # context_object_name = 'person'  # The default
 
+    @property
+    def template_name_suffix(self):
+        return '_%s' %  (self.object.layout_trans or 'detail')
+
 
 class GroupDetailView(LanguageChangerMixin, AllowPKsTooMixin,
                       TranslatableSlugMixin, DetailView):
