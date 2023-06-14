@@ -1,65 +1,34 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-# Translators:
-# Frigory33 <chironsylvain@orange.fr>, 2016
-# Marc Antoine THEVENET <mat@idimweb.com>, 2016
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Aldryn People\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-23 01:42+0000\n"
-"PO-Revision-Date: 2016-07-06 17:38+0000\n"
-"Last-Translator: Frigory33 <chironsylvain@orange.fr>\n"
-"Language-Team: French (http://www.transifex.com/divio/aldryn-people/language/"
-"fr/)\n"
-"Language: fr\n"
+"POT-Creation-Date: 2020-05-04 11:47+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: addons-dev/js-people/aldryn_people/admin.py:79
-msgid "Mark selected as published"
-msgstr ""
-
-#: addons-dev/js-people/aldryn_people/admin.py:89
-msgid "Mark selected as not published"
-msgstr ""
-
-#: addons-dev/js-people/aldryn_people/admin.py:94
-msgid "Mark selected as details enabled"
-msgstr ""
-
-#: addons-dev/js-people/aldryn_people/admin.py:99
-msgid "Mark selected as not details enabled"
-msgstr ""
-
-#: addons-dev/js-people/aldryn_people/admin.py:250
-#: addons-dev/js-people/aldryn_people/admin.py:372
+#: addons-dev/js-people/aldryn_people/admin.py:176
+#: addons-dev/js-people/aldryn_people/admin.py:241
 msgid "Contact (untranslated)"
-msgstr "Contact (non traduit)"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/admin.py:266
+#: addons-dev/js-people/aldryn_people/admin.py:192
 msgid "# Groups"
-msgstr "# Groupes"
-
-#: addons-dev/js-people/aldryn_people/admin.py:271
-msgid "Show"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/admin.py:333
-msgid "Language must be set to a supported language!"
-msgstr ""
-
-#: addons-dev/js-people/aldryn_people/admin.py:339
-msgid "You do not have permission to copy these plugins."
-msgstr ""
-
-#: addons-dev/js-people/aldryn_people/admin.py:392
+#: addons-dev/js-people/aldryn_people/admin.py:261
 msgid "# People"
-msgstr "# Personnes"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/boilerplates/bootstrap3/templates/aldryn_people/group_list.html:13
 #: addons-dev/js-people/aldryn_people/boilerplates/bootstrap3/templates/aldryn_people/plugins/standard/people_list.html:26
@@ -68,7 +37,7 @@ msgstr "# Personnes"
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/group_list.html:13
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/plugins/standard/people_list.html:25
 msgid "Ungrouped"
-msgstr "Dégroupé"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/boilerplates/bootstrap3/templates/aldryn_people/includes/group.html:13
 #: addons-dev/js-people/aldryn_people/boilerplates/bootstrap3/templates/aldryn_people/includes/person.html:28
@@ -80,7 +49,7 @@ msgstr "Dégroupé"
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/includes/person.html:31
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/includes/person_small.html:17
 msgid "Phone:"
-msgstr "Téléphone :"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/boilerplates/bootstrap3/templates/aldryn_people/includes/group.html:17
 #: addons-dev/js-people/aldryn_people/boilerplates/bootstrap3/templates/aldryn_people/includes/person.html:38
@@ -88,7 +57,7 @@ msgstr "Téléphone :"
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/includes/person.html:39
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/includes/person_small.html:25
 msgid "Fax:"
-msgstr "Fax :"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/boilerplates/bootstrap3/templates/aldryn_people/includes/group.html:21
 #: addons-dev/js-people/aldryn_people/boilerplates/bootstrap3/templates/aldryn_people/includes/person.html:43
@@ -96,7 +65,7 @@ msgstr "Fax :"
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/includes/person.html:43
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/includes/person_small.html:29
 msgid "Email:"
-msgstr "Courriel :"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/boilerplates/bootstrap3/templates/aldryn_people/includes/group.html:26
 #: addons-dev/js-people/aldryn_people/boilerplates/bootstrap3/templates/aldryn_people/includes/person.html:49
@@ -104,7 +73,7 @@ msgstr "Courriel :"
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/includes/person.html:71
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/includes/person_small.html:57
 msgid "Website:"
-msgstr "Site Web :"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/boilerplates/bootstrap3/templates/aldryn_people/includes/group.html:34
 #: addons-dev/js-people/aldryn_people/boilerplates/legacy/templates/aldryn_people/plugins/feature/people_list.html:14
@@ -112,14 +81,14 @@ msgstr "Site Web :"
 #: addons-dev/js-people/aldryn_people/boilerplates/legacy/templates/aldryn_people/plugins/standard/people_list.html:16
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/includes/group.html:27
 msgid "Address:"
-msgstr "Adresse :"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/boilerplates/bootstrap3/templates/aldryn_people/includes/person.html:33
 #: addons-dev/js-people/aldryn_people/boilerplates/legacy/templates/aldryn_people/includes/people_item.html:12
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/includes/person.html:35
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/includes/person_small.html:21
 msgid "Mobile:"
-msgstr "Mobile :"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/boilerplates/bootstrap3/templates/aldryn_people/includes/person.html:55
 #: addons-dev/js-people/aldryn_people/boilerplates/legacy/templates/aldryn_people/includes/people_item.html:14
@@ -154,53 +123,22 @@ msgstr ""
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/includes/person.html:81
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/includes/person_small.html:67
 msgid "Download vCard"
-msgstr "Télécharger la carte de visite"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/boilerplates/legacy/templates/aldryn_people/group_list.html:7
-#: addons-dev/js-people/aldryn_people/models.py:171
+#: addons-dev/js-people/aldryn_people/models.py:167
 msgid "Groups"
-msgstr "Groupes"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/boilerplates/legacy/templates/aldryn_people/includes/people_item.html:13
 msgid "E-Mail:"
-msgstr "Courriel :"
-
-#: addons-dev/js-people/aldryn_people/cms_appconfig.py:25
-#: addons-dev/js-people/aldryn_people/models.py:83
-msgid "name"
-msgstr "nom"
-
-#: addons-dev/js-people/aldryn_people/cms_appconfig.py:30
-msgid "untitled"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/cms_appconfig.py:33
-#, fuzzy
-#| msgid "description"
-msgid "Section"
-msgstr "description"
-
-#: addons-dev/js-people/aldryn_people/cms_appconfig.py:34
-#, fuzzy
-#| msgid "Options"
-msgid "Sections"
-msgstr "Options"
-
-#: addons-dev/js-people/aldryn_people/cms_apps.py:20
-#: addons-dev/js-people/aldryn_people/cms_apps.py:31
+#: addons-dev/js-people/aldryn_people/cms_apps.py:18
+#: addons-dev/js-people/aldryn_people/cms_apps.py:29
 #: addons-dev/js-people/aldryn_people/cms_plugins.py:43
-#: addons-dev/js-people/aldryn_people/models.py:306
+#: addons-dev/js-people/aldryn_people/models.py:284
 msgid "People"
-msgstr "Personnes"
-
-#: addons-dev/js-people/aldryn_people/cms_apps.py:52
-#, fuzzy
-#| msgid "People list"
-msgid "People by location"
-msgstr "Liste des personnes"
-
-#: addons-dev/js-people/aldryn_people/cms_apps.py:64
-msgid "People by company"
 msgstr ""
 
 #: addons-dev/js-people/aldryn_people/cms_plugins.py:24
@@ -208,405 +146,347 @@ msgid ""
 "Seems that there is no valid application hook for aldryn-people.Links can't "
 "be rendered without an app hook."
 msgstr ""
-"Il semble qu'il n'y a aucune accroche d'application valide pour les "
-"personnes d'Aldryn. Les liens ne peuvent pas être produits sans accroche "
-"d'application."
 
 #: addons-dev/js-people/aldryn_people/cms_plugins.py:34
 msgid "People list"
-msgstr "Liste des personnes"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/cms_plugins.py:44
 msgid "Select and arrange specific people, or leave blank to use all."
 msgstr ""
-"Sélectionnez et organisez des personnes spécifiques, ou laissez vide pour "
-"utiliser tout le monde."
 
 #: addons-dev/js-people/aldryn_people/cms_plugins.py:50
 msgid "Options"
-msgstr "Options"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/cms_plugins.py:106
-#, fuzzy
-#| msgid "# People"
 msgid "Related People"
-msgstr "# Personnes"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/cms_toolbars.py:124
+#: addons-dev/js-people/aldryn_people/cms_toolbars.py:109
 msgid "Group list"
-msgstr "Liste du groupe"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/cms_toolbars.py:131
+#: addons-dev/js-people/aldryn_people/cms_toolbars.py:116
 msgid "Add new group"
-msgstr "Ajouter un nouveau groupe"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/cms_toolbars.py:135
+#: addons-dev/js-people/aldryn_people/cms_toolbars.py:120
 msgid "Edit group"
-msgstr "Modifier un groupe"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/cms_toolbars.py:142
+#: addons-dev/js-people/aldryn_people/cms_toolbars.py:127
 msgid "Person list"
-msgstr "Liste des personnes"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/cms_toolbars.py:151
+#: addons-dev/js-people/aldryn_people/cms_toolbars.py:136
 msgid "Add new person"
-msgstr "Ajouter une nouvelle personne"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/cms_toolbars.py:156
+#: addons-dev/js-people/aldryn_people/cms_toolbars.py:141
 msgid "Edit person"
-msgstr "Modifier la personne"
-
-#: addons-dev/js-people/aldryn_people/cms_toolbars.py:160
-msgid "Language"
-msgstr ""
-
-#: addons-dev/js-people/aldryn_people/cms_toolbars.py:184
-msgid "Add Translation"
-msgstr ""
-
-#: addons-dev/js-people/aldryn_people/cms_toolbars.py:192
-msgid "Delete Translation"
-msgstr ""
-
-#: addons-dev/js-people/aldryn_people/cms_toolbars.py:198
-msgid "Copy all plugins"
-msgstr ""
-
-#: addons-dev/js-people/aldryn_people/cms_toolbars.py:199
-#, python-format
-msgid "from %s"
-msgstr ""
-
-#: addons-dev/js-people/aldryn_people/cms_toolbars.py:200
-#, python-format
-msgid "Are you sure you want to copy all plugins from %s?"
 msgstr ""
 
 #: addons-dev/js-people/aldryn_people/cms_wizards.py:100
 msgid "New person"
-msgstr "Nouvelle personne"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/cms_wizards.py:103
 msgid "Create a new person."
-msgstr "Créer une nouvelle personne."
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/cms_wizards.py:110
 msgid "New group"
-msgstr "Nouveau groupe"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/cms_wizards.py:113
 msgid "Create a new group."
-msgstr "Créer un nouveau groupe."
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/menu.py:24
-#, fuzzy
-#| msgid "Aldryn People: Person Menu"
 msgid "JumpSuite People: Person Menu"
-msgstr "Personnes d'Aldryn : Menu de la personne"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/menu.py:54
-#, fuzzy
-#| msgid "Aldryn People: Group Menu"
 msgid "JumpSuite People: Group Menu"
-msgstr "Personnes d'Aldryn : Menu du groupe"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/menu.py:70
 #, python-brace-format
 msgid "group: {0}"
-msgstr "groupe : {0}"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:84
+#: addons-dev/js-people/aldryn_people/models.py:81
+msgid "name"
+msgstr ""
+
+#: addons-dev/js-people/aldryn_people/models.py:82
 msgid "Provide this group's name."
-msgstr "Indiquer le nom de ce groupe."
+msgstr ""
+
+#: addons-dev/js-people/aldryn_people/models.py:83
+#: addons-dev/js-people/aldryn_people/models.py:209
+msgid "description"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/models.py:85
-#: addons-dev/js-people/aldryn_people/models.py:216
-msgid "description"
-msgstr "description"
+msgid "slug"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/models.py:87
-msgid "slug"
-msgstr "slug"
-
-#: addons-dev/js-people/aldryn_people/models.py:89
-#: addons-dev/js-people/aldryn_people/models.py:214
+#: addons-dev/js-people/aldryn_people/models.py:207
 msgid "Leave blank to auto-generate a unique slug."
-msgstr "Laissez vide pour générer un slug unique automatiquement."
+msgstr ""
+
+#: addons-dev/js-people/aldryn_people/models.py:90
+msgid "address"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/models.py:92
-msgid "address"
-msgstr "adresse"
+msgid "postal code"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/models.py:94
-msgid "postal code"
-msgstr "code postal"
+msgid "city"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/models.py:96
-msgid "city"
-msgstr "ville"
+#: addons-dev/js-people/aldryn_people/models.py:221
+msgid "phone"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/models.py:98
-#: addons-dev/js-people/aldryn_people/models.py:240
-msgid "phone"
-msgstr "téléphone"
+#: addons-dev/js-people/aldryn_people/models.py:227
+msgid "fax"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/models.py:100
-#: addons-dev/js-people/aldryn_people/models.py:246
-msgid "fax"
-msgstr "fax"
+#: addons-dev/js-people/aldryn_people/models.py:229
+msgid "email"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/models.py:102
-#: addons-dev/js-people/aldryn_people/models.py:248
-msgid "email"
-msgstr "courriel"
+#: addons-dev/js-people/aldryn_people/models.py:241
+msgid "website"
+msgstr ""
 
 #: addons-dev/js-people/aldryn_people/models.py:104
-#: addons-dev/js-people/aldryn_people/models.py:260
-msgid "website"
-msgstr "site web"
-
-#: addons-dev/js-people/aldryn_people/models.py:106
 msgid "sorting field"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:107
+#: addons-dev/js-people/aldryn_people/models.py:105
 msgid "first with low value"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:113
+#: addons-dev/js-people/aldryn_people/models.py:109
 msgid "Type"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:118
+#: addons-dev/js-people/aldryn_people/models.py:114
 msgid "Instance namespace"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:170
+#: addons-dev/js-people/aldryn_people/models.py:166
 msgid "Group"
-msgstr "Groupe"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:176
+#: addons-dev/js-people/aldryn_people/models.py:172
 #, python-brace-format
 msgid "Group: {0}"
-msgstr "Groupe : {0}"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:203
-#: addons-dev/js-people/aldryn_people/models.py:234
+#: addons-dev/js-people/aldryn_people/models.py:196
+#: addons-dev/js-people/aldryn_people/models.py:215
 msgid "first name"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:204
-#: addons-dev/js-people/aldryn_people/models.py:235
-#, fuzzy
-#| msgid "Provide this person's name."
+#: addons-dev/js-people/aldryn_people/models.py:197
+#: addons-dev/js-people/aldryn_people/models.py:216
 msgid "Provide this person's first name."
-msgstr "Indiquez le nom de cette personne."
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:206
-#: addons-dev/js-people/aldryn_people/models.py:237
-#, fuzzy
-#| msgid "name"
+#: addons-dev/js-people/aldryn_people/models.py:199
+#: addons-dev/js-people/aldryn_people/models.py:218
 msgid "last name"
-msgstr "nom"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:207
-#: addons-dev/js-people/aldryn_people/models.py:238
-#, fuzzy
-#| msgid "Provide this person's name."
+#: addons-dev/js-people/aldryn_people/models.py:200
+#: addons-dev/js-people/aldryn_people/models.py:219
 msgid "Provide this person's last name."
-msgstr "Indiquez le nom de cette personne."
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:209
+#: addons-dev/js-people/aldryn_people/models.py:202
 msgid "suffix"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:210
-#, fuzzy
-#| msgid "Provide this person's name."
+#: addons-dev/js-people/aldryn_people/models.py:203
 msgid "Provide this person's suffix."
-msgstr "Indiquez le nom de cette personne."
-
-#: addons-dev/js-people/aldryn_people/models.py:212
-msgid "unique slug"
-msgstr "slug unique"
-
-#: addons-dev/js-people/aldryn_people/models.py:215
-msgid "role"
-msgstr "rôle"
-
-#: addons-dev/js-people/aldryn_people/models.py:219
-#: addons-dev/js-people/aldryn_people/models.py:275
-#, fuzzy
-#| msgid "website"
-msgid "show on website"
-msgstr "site web"
-
-#: addons-dev/js-people/aldryn_people/models.py:224
-#: addons-dev/js-people/aldryn_people/models.py:638
-msgid "layout"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:242
+#: addons-dev/js-people/aldryn_people/models.py:205
+msgid "unique slug"
+msgstr ""
+
+#: addons-dev/js-people/aldryn_people/models.py:208
+msgid "role"
+msgstr ""
+
+#: addons-dev/js-people/aldryn_people/models.py:212
+#: addons-dev/js-people/aldryn_people/models.py:254
+msgid "show on website"
+msgstr ""
+
+#: addons-dev/js-people/aldryn_people/models.py:223
 msgid "secondary phone"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:244
+#: addons-dev/js-people/aldryn_people/models.py:225
 msgid "mobile"
-msgstr "mobile"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:250
+#: addons-dev/js-people/aldryn_people/models.py:231
 msgid "facebook"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:252
+#: addons-dev/js-people/aldryn_people/models.py:233
 msgid "twitter"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:254
+#: addons-dev/js-people/aldryn_people/models.py:235
 msgid "linkedin"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:256
+#: addons-dev/js-people/aldryn_people/models.py:237
 msgid "xing"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:258
+#: addons-dev/js-people/aldryn_people/models.py:239
 msgid "location"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:263
+#: addons-dev/js-people/aldryn_people/models.py:244
 msgid ""
 "Choose and order the groups for this person, the first will be the \"primary "
 "group\"."
 msgstr ""
-"Choisissez et ordonnez les groupes pour cette personne ; le premier sera le "
-"« groupe principal »."
 
-#: addons-dev/js-people/aldryn_people/models.py:271
+#: addons-dev/js-people/aldryn_people/models.py:252
 msgid "enable vCard download"
-msgstr "activer le téléchargement de la carte de visite"
-
-#: addons-dev/js-people/aldryn_people/models.py:273
-msgid "enable details"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:281
+#: addons-dev/js-people/aldryn_people/models.py:260
 msgid "categories"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:283
+#: addons-dev/js-people/aldryn_people/models.py:262
 msgid "services"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:290
+#: addons-dev/js-people/aldryn_people/models.py:269
 msgid "Show on sitemap"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:291
+#: addons-dev/js-people/aldryn_people/models.py:270
 msgid "Show on xml sitemap"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:292
+#: addons-dev/js-people/aldryn_people/models.py:271
 msgid "noindex"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:293
+#: addons-dev/js-people/aldryn_people/models.py:272
 msgid "nofollow"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:298
+#: addons-dev/js-people/aldryn_people/models.py:277
 msgid "Canonical URL"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:305
+#: addons-dev/js-people/aldryn_people/models.py:283
 msgid "Person"
-msgstr "Personne"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:567
+#: addons-dev/js-people/aldryn_people/models.py:538
 msgid "Standard"
-msgstr "Standard"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:568
+#: addons-dev/js-people/aldryn_people/models.py:539
 msgid "Feature"
-msgstr "Fonctionnalité"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:572
+#: addons-dev/js-people/aldryn_people/models.py:543
 msgid "Style"
-msgstr "Style"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:577
+#: addons-dev/js-people/aldryn_people/models.py:548
 msgid "Select and arrange specific people, or, leave blank to select all."
 msgstr ""
-"Sélectionnez et organisez des personnes spécifiques, ou laissez vide pour "
-"sélectionner tout le monde."
 
-#: addons-dev/js-people/aldryn_people/models.py:608
+#: addons-dev/js-people/aldryn_people/models.py:579
 msgid "group by group"
-msgstr "groupe par groupe"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:610
+#: addons-dev/js-people/aldryn_people/models.py:581
 msgid "Group people by their group."
-msgstr "Grouper les personnes selon leur groupe."
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:613
+#: addons-dev/js-people/aldryn_people/models.py:584
 msgid "show ungrouped"
-msgstr "afficher dégroupé"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:615
+#: addons-dev/js-people/aldryn_people/models.py:586
 msgid "When using \"group by group\", show ungrouped people too."
 msgstr ""
-"Lorsque vous utilisez « grouper par groupe », montrer également les "
-"personnes sans groupe."
 
-#: addons-dev/js-people/aldryn_people/models.py:618
+#: addons-dev/js-people/aldryn_people/models.py:589
 msgid "Show links to Detail Page"
-msgstr "Montrer les liens vers la page de détails"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:620
+#: addons-dev/js-people/aldryn_people/models.py:591
 msgid "Show links to download vCard"
-msgstr "Montrer les liens pour télécharger la carte de visite"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:634
+#: addons-dev/js-people/aldryn_people/models.py:605
 msgid "Title"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:637
+#: addons-dev/js-people/aldryn_people/models.py:608
 msgid "Number of people"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:639
-#, fuzzy
-#| msgid "# People"
+#: addons-dev/js-people/aldryn_people/models.py:609
+msgid "layout"
+msgstr ""
+
+#: addons-dev/js-people/aldryn_people/models.py:610
 msgid "key people"
-msgstr "# Personnes"
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:640
-#, fuzzy
-#| msgid "Create a new group."
+#: addons-dev/js-people/aldryn_people/models.py:611
 msgid "related groups"
-msgstr "Créer un nouveau groupe."
+msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:641
+#: addons-dev/js-people/aldryn_people/models.py:612
 msgid "related locations"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:642
+#: addons-dev/js-people/aldryn_people/models.py:613
 msgid "related categories"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:643
+#: addons-dev/js-people/aldryn_people/models.py:614
 msgid "related services"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:644
+#: addons-dev/js-people/aldryn_people/models.py:615
 msgid "Show “See More Button”"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:645
+#: addons-dev/js-people/aldryn_people/models.py:616
 msgid "See More Button Text"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/models.py:646
+#: addons-dev/js-people/aldryn_people/models.py:617
 msgid "See More Button Link"
 msgstr ""
 
@@ -626,17 +506,9 @@ msgstr ""
 msgid "Last"
 msgstr ""
 
-#: addons-dev/js-people/aldryn_people/templates/aldryn_people/plugins/related_people.html:23
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/plugins/related_people__cols.html:23
-#: addons-dev/js-people/aldryn_people/templates/aldryn_people/plugins/related_people__default.html:23
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/plugins/related_people__hero.html:23
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/plugins/related_people__people.html:23
 #: addons-dev/js-people/aldryn_people/templates/aldryn_people/plugins/related_people__rows.html:23
 msgid "No related people found"
 msgstr ""
-
-#~ msgid "Initial version of {object_repr}. {trans_info}"
-#~ msgstr "Version initiale pour {object_repr}. {trans_info}"
-
-#~ msgid "person: {0}"
-#~ msgstr "personne : {0}"

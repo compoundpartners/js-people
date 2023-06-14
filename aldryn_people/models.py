@@ -30,7 +30,6 @@ except ImportError:
     from django.urls import reverse, NoReverseMatch
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
@@ -75,7 +74,7 @@ except:
     class CustomPersonMixin(object):
         pass
 
-@python_2_unicode_compatible
+
 class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
             TranslatableModel):
     slug_source_field_name = 'name'
@@ -191,7 +190,7 @@ class Group(TranslationHelperMixin, TranslatedAutoSlugifyMixin,
         return self.get_absolute_url(language)
 
 
-@python_2_unicode_compatible
+
 class Person(CustomPersonMixin,
              TranslationHelperMixin,
              TranslatedAutoSlugifyMixin,
@@ -256,6 +255,8 @@ class Person(CustomPersonMixin,
         verbose_name=_('xing'), null=True, blank=True, max_length=200)
     location = models.ForeignKey('js_locations.Location',
         on_delete=models.SET_NULL, verbose_name=_('location'), null=True, blank=True)
+    locations = SortedManyToManyField('js_locations.Location',
+        verbose_name=_('locations'), null=True, blank=True, related_name='people')
     website = models.URLField(
         verbose_name=_('website'), null=True, blank=True)
     groups = SortedManyToManyField(
@@ -560,7 +561,7 @@ class Person(CustomPersonMixin,
         #raise AttributeError
 
 
-@python_2_unicode_compatible
+
 class BasePeoplePlugin(CMSPlugin):
 
     STYLE_CHOICES = [
@@ -623,7 +624,7 @@ class PeoplePlugin(BasePeoplePlugin):
         abstract = False
 
 
-@python_2_unicode_compatible
+
 class RelatedPeoplePlugin(CMSPlugin):
 
     # NOTE: This one does NOT subclass NewsBlogCMSPlugin. This is because this

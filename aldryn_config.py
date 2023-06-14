@@ -21,6 +21,9 @@ class Form(forms.BaseForm):
     secondary_phone = forms.CheckboxField(
         'Show secondary telephone number', required=False, initial=False
     )
+    multy_location = forms.CheckboxField(
+        'Use multy locations', required=False, initial=False
+    )
     hide_email = forms.CheckboxField(
         'Hide Email', required=False, initial=False
     )
@@ -104,6 +107,7 @@ class Form(forms.BaseForm):
         settings['ALDRYN_PEOPLE_HIDE_CATEGORIES'] = int(data['hide_categories'])
         settings['ALDRYN_PEOPLE_SHOW_SECONDARY_IMAGE'] = int(data['secondary_image'])
         settings['ALDRYN_PEOPLE_SHOW_SECONDARY_PHONE'] = int(data['secondary_phone'])
+        settings['ALDRYN_PEOPLE_USE_MULTY_LOCATIONS'] = int(data['multy_location'])
         settings['ALDRYN_PEOPLE_SUMMARY_RICHTEXT'] = int(data['summary_richtext'])
         settings['ALDRYN_PEOPLE_TRANSLATE_IS_PUBLISHED'] = int(data['translate_is_published'])
         settings['ALDRYN_PEOPLE_TRANSLATE_VISUAL'] = int(data['translate_visual'])

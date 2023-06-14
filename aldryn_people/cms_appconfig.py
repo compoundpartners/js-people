@@ -8,7 +8,6 @@ from app_data import AppDataForm
 from django import forms
 from django.conf import settings
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from parler.models import TranslatableModel, TranslatedFields
 from sortedm2m.fields import SortedManyToManyField
@@ -18,7 +17,7 @@ except:
     from django.contrib.admin.widgets import FilteredSelectMultiple as SortedFilteredSelectMultiple
     SortedMultipleChoiceField = forms.ModelMultipleChoiceField
 
-@python_2_unicode_compatible
+
 class PeopleConfig(TranslatableModel, AppHookConfig):
     """Adds some translatable, per-app-instance fields."""
     translations = TranslatedFields(

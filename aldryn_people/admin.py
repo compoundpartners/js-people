@@ -61,6 +61,7 @@ from .constants import (
     TRANSLATE_IS_PUBLISHED,
     TRANSLATE_VISUAL,
     IS_THERE_COMPANIES,
+    ALDRYN_PEOPLE_USE_MULTY_LOCATIONS,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
@@ -140,7 +141,7 @@ class PersonAdmin(PlaceholderAdminMixin,
             db_field, request, **kwargs)
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        if db_field.name in ['services']:
+        if db_field.name in ['services', 'locations']:
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
@@ -192,9 +193,14 @@ class PersonAdmin(PlaceholderAdminMixin,
             'xing',
         )
     if ALDRYN_PEOPLE_HIDE_LOCATION == 0:
-        contact_fields += (
-            'location',
-        )
+        if ALDRYN_PEOPLE_USE_MULTY_LOCATIONS:            
+            contact_fields += (
+                'locations',
+            )
+        else:
+            contact_fields += (
+                'location',
+            )
     if ALDRYN_PEOPLE_HIDE_VCARD == 0:
         contact_fields += (
             'vcard_enabled',
