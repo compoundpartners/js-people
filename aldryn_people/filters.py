@@ -14,6 +14,7 @@ from .constants import (
     ADD_FILTERED_CATEGORIES,
     ADDITIONAL_EXCLUDE,
     FILTER_EMPTY_LABELS,
+    ALDRYN_PEOPLE_USE_MULTY_LOCATIONS,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
@@ -65,7 +66,10 @@ class PeopleFilters(CustomFilterMixin, django_filters.FilterSet):
     service = django_filters.ModelChoiceFilter('services', label='service', empty_label='by service', queryset=Service.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('service', {})))
     group = django_filters.ModelChoiceFilter('groups', label='group', empty_label='by role', queryset=models.Group.objects.exclude(**ADDITIONAL_EXCLUDE.get('group', {})))
     letter = django_filters.CharFilter('last_name', 'istartswith')
-    location = django_filters.ModelChoiceFilter('location', label='location', empty_label='by location', queryset=Location.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('location', {})))
+    if ALDRYN_PEOPLE_USE_MULTY_LOCATIONS:
+        location = django_filters.ModelChoiceFilter('locations', label='location', empty_label='by location', queryset=Location.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('location', {})))
+    else:
+        location = django_filters.ModelChoiceFilter('location', label='location', empty_label='by location', queryset=Location.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('location', {})))
 
     class Meta:
         model = models.Person

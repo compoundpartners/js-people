@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 from aldryn_people import __version__
 
 REQUIREMENTS = [
-    'Django>=1.8,<3.0',
+    'Django>=1.8',
     'aldryn-boilerplates==0.8.0',
     'aldryn-common>=0.1.3',
     'aldryn-translation-tools>=0.1.0',
@@ -12,8 +12,8 @@ REQUIREMENTS = [
     'django-filer>=0.9.9',
     'djangocms-text-ckeditor',
     'phonenumbers==8.11.0',
-    'six==1.13.0',
-    'django-filter==2.2.0',
+    #'six==1.13.0',
+    'django-filter',
     'django-crispy-forms==1.8.1',
 
     # DO NOT REMOVE THE FOLLOWING, IT IS REQUIRED FOR EXISTING MIGRATIONS
