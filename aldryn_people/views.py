@@ -34,6 +34,20 @@ from .constants import (
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
 
+
+class NoneMixin(object):
+    pass
+
+try:
+    from custom.aldryn_people.views import CustomListMixin
+except:
+    CustomListMixin = NoneMixin
+try:
+    from custom.aldryn_people.views import CustomDetailMixin
+except:
+    CustomDetailMixin = NoneMixin
+
+
 def get_language(request):
     lang = getattr(request, 'LANGUAGE_CODE', None)
     if lang is None:
@@ -162,7 +176,7 @@ class DownloadVcardView(PublishedMixin, AllowPKsTooMixin, TranslatableSlugMixin,
         return response
 
 
-class PersonDetailView(CachedMixin, PublishedMixin, LanguageChangerMixin, AllowPKsTooMixin,
+class PersonDetailView(CustomDetailMixin, CachedMixin, PublishedMixin, LanguageChangerMixin, AllowPKsTooMixin,
                        TranslatableSlugMixin, DetailView):
     model = Person
     # context_object_name = 'person'  # The default
@@ -204,7 +218,7 @@ class GroupListView(FilterFormMixin, ListView):
         return context
 
 
-class SearchView(FilterMixin, PublishedMixin, ListView):
+class SearchView(CustomListMixin, FilterMixin, PublishedMixin, ListView):
     model = Person
     template_name = 'aldryn_people/search.html'
     paginate_by = 20
