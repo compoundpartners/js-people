@@ -284,7 +284,7 @@ class Person(CustomPersonMixin,
          verbose_name=_('services'), blank=True)
     content = PlaceholderField('content',
         related_name='person_content')
-    placeholder_sidebar = PlaceholderField('sidebar')
+    placeholder_sidebar = PlaceholderField('person_sidebar')
     banner = PlaceholderField('person_banner',
         related_name='person_banner')
 

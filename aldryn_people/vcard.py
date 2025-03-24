@@ -25,7 +25,7 @@ class Vcard(object):
         if value is None:
             return ''
         value = sub(r'[\;,"]', r'\\\0', value)
-        return value.replace('\r', r'\r').replace('\n', r'\n')
+        return value.replace('\r', '').replace('\n', r'\n')
 
     def __wrap_logical_line(self, line):
         return '\r\n '.join(line[i:i + 75] for i in range(0, len(line), 75))
